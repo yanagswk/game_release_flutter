@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:release/api/api.dart';
+import 'package:release/common/AdModBanner.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
@@ -96,155 +97,164 @@ class _GameDetailState extends State<GameDetail> {
           // 画面上部のタイトル
           appBar: MyAppBar(title: "ゲーム詳細画面"),
           body: Center(
-            child: SingleChildScrollView(   // SingleChildScrollViewの中でFlexible・Expandedを使うときは、Containerで囲って、heightを指定する
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // ゲームタイトル
-                  Container(
-                    margin: const EdgeInsets.all(16.0),
-                    child: Row(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(   // SingleChildScrollViewの中でFlexible・Expandedを使うときは、Containerで囲って、heightを指定する
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Flexible(
+                        // ゲームタイトル
+                        Container(
+                          margin: const EdgeInsets.all(16.0),
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(bottom: 4.0),
+                                      child: Text(
+                                        game.title,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        game.label,
+                                        style: const TextStyle(
+                                          fontSize: 12.0,
+                                          color: Colors.grey
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: 200,
+                          height: 200,
+                          child: Image.network(
+                            game.largeImageUrl,
+                            errorBuilder: (c, o, s) {
+                              return const Icon(
+                                Icons.downloading,
+                                color: Colors.grey,
+                              );
+                            },
+                          ),
+                        ),
+                      
+                        // 値段、評価点
+                        Container(
+                          margin: const EdgeInsets.all(30.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
                                 margin: const EdgeInsets.only(bottom: 4.0),
                                 child: Text(
-                                  game.title,
+                                  '(税込) ${game.price} 円',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16.0
+                                    fontSize: 20.0
                                   ),
                                 ),
                               ),
-                              Container(
-                                child: Text(
-                                  game.label,
-                                  style: const TextStyle(
-                                    fontSize: 12.0,
-                                    color: Colors.grey
+                              Text('発売日 ${game.salesDate}'),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      // 星評価
+                                      RatingBar.builder(
+                                        itemBuilder: (context, index) => const Icon(
+                                          Icons.star,
+                                          color: Colors.yellow,
+                                        ),
+                                        onRatingUpdate: (rating) {
+                                          // 評価更新時
+                                        },
+                                        itemCount: 5,           // 星の数
+                                        initialRating: game.reviewAverage,     // 初期値
+                                        allowHalfRating: true,  // 小数点有効
+                                        ignoreGestures: true    // クリックしても反応しないように
+                                      ),
+                                      // 評価値
+                                      Text("(平均: ${game.reviewAverage})"),
+                                    ]
                                   ),
-                                ),
-                              )
+                                  // お気に入り
+                                  // loading
+                                  // ?
+                                  // const SizedBox(
+                                  //   height: 25,
+                                  //   width: 25,
+                                  //   child: CircularProgressIndicator(),
+                                  // ) // ローディング
+                                  // :
+                                  IconButton( // お気に入りアイコン
+                                    icon: SizedBox(
+                                      height: 25,
+                                      width: 25,
+                                      child: Icon(
+                                        game.isFavorite ? Icons.favorite : Icons.favorite_border,//追加
+                                        color: game.isFavorite ? Colors.red : null,//追
+                                        // size: 25
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        loading = true;
+                                      });
+                                      // お気に入りapiを叩く
+                                      favoriteGame(game.id, game.isFavorite);
+                                    }
+                                  )
+                                ],
+                              ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 200,
-                    height: 200,
-                    child: Image.network(
-                      game.largeImageUrl,
-                      errorBuilder: (c, o, s) {
-                        return const Icon(
-                          Icons.downloading,
-                          color: Colors.grey,
-                        );
-                      },
-                    ),
-                  ),
-      
-                  // 値段、評価点
-                  Container(
-                    margin: const EdgeInsets.all(30.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                        // 商品説明
                         Container(
-                          margin: const EdgeInsets.only(bottom: 4.0),
-                          child: Text(
-                            '(税込) ${game.price} 円',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20.0
-                            ),
-                          ),
+                          margin: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 30.0),
+                          child: Text(game.itemCaption),
                         ),
-                        Text('発売日 ${game.salesDate}'),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                // 星評価
-                                RatingBar.builder(
-                                  itemBuilder: (context, index) => const Icon(
-                                    Icons.star,
-                                    color: Colors.yellow,
-                                  ),
-                                  onRatingUpdate: (rating) {
-                                    // 評価更新時
-                                  },
-                                  itemCount: 5,           // 星の数
-                                  initialRating: game.reviewAverage,     // 初期値
-                                  allowHalfRating: true,  // 小数点有効
-                                  ignoreGestures: true    // クリックしても反応しないように
-                                ),
-                                // 評価値
-                                Text("(平均: ${game.reviewAverage})"),
-                              ]
-                            ),
-                            // お気に入り
-                            // loading
-                            // ?
-                            // const SizedBox(
-                            //   height: 25,
-                            //   width: 25,
-                            //   child: CircularProgressIndicator(),
-                            // ) // ローディング
-                            // :
-                            IconButton( // お気に入りアイコン
-                              icon: SizedBox(
-                                height: 25,
-                                width: 25,
-                                child: Icon(
-                                  game.isFavorite ? Icons.favorite : Icons.favorite_border,//追加
-                                  color: game.isFavorite ? Colors.red : null,//追
-                                  // size: 25
-                                ),
+                        Link(
+                          uri: Uri.parse(game.itemUrl),
+                          target: LinkTarget.self,
+                          builder: (BuildContext ctx, FollowLink? openLink) {
+                            return TextButton(
+                              onPressed: openLink,
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  loading = true;
-                                });
-                                // お気に入りapiを叩く
-                                favoriteGame(game.id, game.isFavorite);
-                              }
-                            )
-                          ],
+                              child: const Text(
+                                '出典: Rakutenブックス',
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            );
+                          },
                         ),
+                        const SizedBox(height: 40),
+                        
                       ],
                     ),
                   ),
-                  // 商品説明
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 30.0),
-                    child: Text(game.itemCaption),
-                  ),
-                  Link(
-                    uri: Uri.parse(game.itemUrl),
-                    target: LinkTarget.self,
-                    builder: (BuildContext ctx, FollowLink? openLink) {
-                      return TextButton(
-                        onPressed: openLink,
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all(EdgeInsets.zero),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: const Text(
-                          '出典: Rakutenブックス',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                ],
-              ),
+                ),
+                // バナー広告
+                AdModBanner()
+              ],
             )
           ),
         ),

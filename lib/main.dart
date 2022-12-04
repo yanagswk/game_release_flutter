@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:release/common/shared_preferences.dart';
 import 'package:release/game_detail.dart';
 import 'package:release/game_favorite.dart';
@@ -25,6 +26,8 @@ import 'package:get/get.dart';
 
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize(); 
   runApp(const MyApp());
 }
 

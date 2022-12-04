@@ -19,7 +19,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   // プライバシーポリシー遷移
   Future _launchUrl() async {
-    var url = "https://massu-engineer.com/privacy_policy_release/";
+    var url = "https://massu-engineer.com/privacy_policy_game_release/";
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -32,18 +32,21 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     return Drawer(
           child: ListView(
             children: [
-              // const DrawerHeader(
-              //   child: Text(
-              //     'My App',
-              //     style: TextStyle(
-              //       fontSize: 24,
-              //       color: Colors.white,
-              //     ),
-              //   ),
-              //   decoration: BoxDecoration(
-              //     color: Colors.blue,
-              //   ),
-              // ),
+              const DrawerHeader(
+                child: Text(
+                  'ゲーム発売日管理',
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
+                // child: Image.asset(
+                //   'assets/game_release_icon.jpg'
+                // ),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+              ),
               // ListTile(
               //   title: Text('お知らせ'),
               //   onTap: () {

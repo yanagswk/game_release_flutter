@@ -1,6 +1,7 @@
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:release/api/api.dart';
+import 'package:release/common/AdModBanner.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/common/system_widget.dart';
 
@@ -81,6 +82,11 @@ class _QuestionPageState extends State<QuestionPage> {
                 },
                 child: Text('送信する'),
               ),
+              Expanded(
+                child: const SizedBox(height:30)
+              ),
+              // バナー広告
+              AdModBanner()
             ]
           ),
         ),

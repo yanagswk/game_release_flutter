@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import "package:collection/collection.Dart";
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:release/common/AdModBanner.dart';
 import 'package:release/common/device_info.dart';
 import 'package:release/common/shared_preferences.dart';
 
@@ -192,7 +194,9 @@ class _GameListState extends State<GameList> {
           GameListInfinityView(
                 contents: groupGames,
                 getContents: getGameList,
-          )
+          ),
+          // バナー広告
+          AdModBanner()
         ],
       );
   }

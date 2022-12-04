@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:release/api/api.dart';
+import 'package:release/common/AdModBanner.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_info.dart';
 import 'package:release/widget/common/my_app_bar.dart';
@@ -58,22 +60,42 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
     return Scaffold(
       appBar: MyAppBar(title: "お気に入り一覧"),  
       body: 
-      favoriteGames.length == 0
-      ?
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(child: Text(text)),
-      )
-      : 
-      ListView.builder(
-        itemCount: favoriteGames.length,
-        itemBuilder: (context, index) {
-          return GameCard(
-            game: favoriteGames[index], 
-            isFavoritePage: true
-          );
-        },
-      )
+        favoriteGames.length == 0
+        ?
+        Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(child: Text(text)),
+              ),
+            ),
+            // バナー広告
+            AdModBanner()
+          ],
+        )
+        : 
+        Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: favoriteGames.length,
+                  itemBuilder: (context, index) {
+                    return GameCard(
+                      game: favoriteGames[index], 
+                      isFavoritePage: true
+                    );
+                  },
+                ),
+              ),
+            ),
+            // バナー広告
+            AdModBanner()
+          ],
+        ),
     );
   }
 }
