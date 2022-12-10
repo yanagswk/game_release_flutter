@@ -53,12 +53,9 @@
 	<false/>
 	<key>GADApplicationIdentifier</key>
     <string>ca-app-pub-5120399662467556~1114003679</string>
-    <!-- <key>SKAdNetworkItems</key>
-	<array>
-	<dict>
-		<key>SKAdNetworkIdentifier</key>
-		<string>cstr6suwn9.skadnetwork</string>
-	</dict>
-	</array> -->
+	<key>NSCalendarsUsageDescription</key>
+	<string>Access most functions for calendar viewing and editing.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Access contacts for event attendee editing.</string>
 </dict>
 </plist>

@@ -7,6 +7,7 @@ import 'package:release/common/AdModBanner.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
+import 'package:release/widget/common/system_widget.dart';
 import 'package:url_launcher/link.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -17,6 +18,9 @@ import 'package:release/common/device_info.dart';
 
 import 'package:release/getx/game_getx.dart';
 import 'package:get/get.dart';
+import 'package:device_calendar/device_calendar.dart';
+import 'package:timezone/timezone.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 class GameDetail extends StatefulWidget {
@@ -35,9 +39,6 @@ class GameDetail extends StatefulWidget {
 }
 
 class _GameDetailState extends State<GameDetail> {
-  // ゲームid
-  // late int gameId;
-
   // ゲーム詳細情報
   late GameInfoModel game;
 
@@ -45,20 +46,52 @@ class _GameDetailState extends State<GameDetail> {
 
   final _gameGetx = Get.put(GameGetx());
 
-  // var isFavorite = false;
+  String? _calenderId = "";
+  String _calenderTitle = "";
 
-  /// api叩く
-  // Future getApiData(int gameId) async {
-  //   game = await ApiClient().getGameDetail(gameId);
-  // }
+  String _calenderYear = "2022";
+  List<String> yearList = ["2022", "2023"];
+  String _calenderMonth = "1";
+  List<String> monthList = [];
+  String _calenderDay = "1";
+  List<String> dayList = [];
+
+  String _calenderStartHour = "0";
+  String _calenderEndHour = "0";
+  List<String> hourList = [];
+
+  String _calenderStartMinutes = "0";
+  String _calenderEndMinutes = "0";
+  List<String> minutesList = [];
 
   @override
   void initState() {
     super.initState();
     // 受け取ったgameを変数に設定
     game = widget.game;
+    _calenderTitle = game.title;
+
+    makeCalenderDataList();
+    var salesDateSplit = game.salesDate.split(RegExp(r'[年月日]'));
+    _calenderYear = salesDateSplit[0];
+    _calenderMonth = salesDateSplit[1];
+    _calenderDay = salesDateSplit[2];
   }
 
+  void makeCalenderDataList() {
+    for(int i = 0; i<=23; i++) {
+      hourList.add(i.toString());
+    }
+    for(int i = 0; i<=59; i++) {
+      minutesList.add(i.toString());
+    }
+    for(int i = 1; i<=12; i++) {
+      monthList.add(i.toString());
+    }
+    for(int i = 1; i<=31; i++) {
+      dayList.add(i.toString());
+    }
+  }
 
   /// ゲームをお気に入り登録する/解除する
   /// https://qiita.com/mamoru_takami/items/2d930ee927c048060741
@@ -84,6 +117,284 @@ class _GameDetailState extends State<GameDetail> {
       });
     }
     _gameGetx.setLoading(false);
+  }
+
+  /// カレンダーにアクセスする (https://qiita.com/MLLB/items/984f1a5eed5d1c08d7ef)
+  Future _calenderAccess() async {
+    var _deviceCalendarPlugin = new DeviceCalendarPlugin();
+    var permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
+    // カレンダーアクセス許可
+    if (permissionsGranted.isSuccess && !permissionsGranted.data!) {
+      permissionsGranted = await _deviceCalendarPlugin.requestPermissions();
+      if (!permissionsGranted.isSuccess || !permissionsGranted.data!) {
+        throw Exception("Not granted access to your calendar");
+      }
+    }
+
+    final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
+    final calendars = calendarsResult?.data;
+    if(calendars == null || calendars.isEmpty) {
+      throw Exception("Can not get calendars");
+    }
+
+    var _defaultCalendar = calendars!
+      .firstWhere((element) => element.isDefault ?? false);
+
+    _calenderId = _defaultCalendar.id;
+
+    if (_calenderId != null) {
+      showModalBottomSheet(
+        //モーダルの背景の色、透過
+        backgroundColor: Colors.transparent,
+        //ドラッグ可能にする（高さもハーフサイズからフルサイズになる様子）
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder:(context, setState) {
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                decoration: BoxDecoration(
+                  //モーダル自体の色
+                  color: Colors.white,
+                  //角丸にする
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.red,
+                            ),
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('戻る')
+                          ),
+                          Text(
+                            'カレンダーに追加',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.blue,
+                            ),
+                            onPressed: (){
+                              addCalender();
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('追加'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text('タイトル'),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextFormField(
+                        controller: TextEditingController(
+                          text: _calenderTitle
+                        )
+                      ),
+                    ),
+                    Text('買う場所・説明・補足'),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextFormField(controller: TextEditingController()),
+                    ),
+                    Text('日付選択'),
+                    Column(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            // 年
+                            DropdownButton(
+                              value: _calenderYear,
+                              items: yearList.map((String year) =>
+                                  DropdownMenuItem(
+                                    value: year,
+                                    child: Text('${year}年')
+                                  )).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _calenderYear = value!;
+                                });
+                              },
+                            ),
+                            // 月
+                            DropdownButton(
+                              value: _calenderMonth,
+                              items: monthList.map((String month) =>
+                                  DropdownMenuItem(
+                                    value: month,
+                                    child: Text('${month}月')
+                                  )).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _calenderMonth = value!;
+                                });
+                              },
+                            ),
+                            // 日
+                            DropdownButton(
+                              value: _calenderDay,
+                              items: dayList.map((String day) =>
+                                  DropdownMenuItem(
+                                    value: day,
+                                    child: Text('${day}日')
+                                  )).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _calenderDay = value!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            // 時間
+                            DropdownButton(
+                              value: _calenderStartHour,
+                              items: hourList.map((String hour) =>
+                                  DropdownMenuItem(
+                                    value: hour,
+                                    child: Text('${hour}時')
+                                  )).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _calenderStartHour = value!;
+                                });
+                              },
+                            ),
+                            // 分
+                            DropdownButton(
+                              value: _calenderStartMinutes,
+                              items: minutesList.map((String minutes) =>
+                                  DropdownMenuItem(
+                                    value: minutes,
+                                    child: Text('${minutes}分')
+                                  )).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _calenderStartMinutes = value!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            // 時間
+                            DropdownButton(
+                              value: _calenderEndHour,
+                              items: hourList.map((String hour) =>
+                                  DropdownMenuItem(
+                                    value: hour,
+                                    child: Text('${hour}時')
+                                  )).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _calenderEndHour = value!;
+                                });
+                              },
+                            ),
+                            // 分
+                            DropdownButton(
+                              value: _calenderEndMinutes,
+                              items: minutesList.map((String minutes) =>
+                                  DropdownMenuItem(
+                                    value: minutes,
+                                    child: Text('${minutes}分')
+                                  )).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _calenderEndHour = value!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              );
+            }
+          );
+        });
+    }
+  }
+
+  ///カレンダーに追加する
+  void addCalender() async {
+    // ローカルロケーションのタイムゾーンを東京に設定
+    setLocalLocation(getLocation("Asia/Tokyo")); 
+    final event = Event(
+      _calenderId,
+      title: _calenderTitle,
+      start: TZDateTime.local(
+        int.parse(_calenderYear),
+        int.parse(_calenderMonth),
+        int.parse(_calenderDay),
+        int.parse(_calenderStartHour),
+        int.parse(_calenderStartMinutes),
+      ),
+      end: TZDateTime.local(
+        int.parse(_calenderYear),
+        int.parse(_calenderMonth),
+        int.parse(_calenderDay),
+        int.parse(_calenderEndHour),
+        int.parse(_calenderEndMinutes),
+      ),
+    );
+    final result = await DeviceCalendarPlugin().createOrUpdateEvent(event);
+    if(result == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => alertBuilderForCupertino(
+          context,
+          'カレンダー追加失敗',
+          'カレンダーの追加に失敗しました'
+        )
+      );
+      return;
+    }
+    if(result.isSuccess){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => alertBuilderForCupertino(
+          context,
+          'カレンダー追加完了',
+          'カレンダーに追加しました'
+        )
+      );
+      return;
+    }
+    if(!result.hasErrors){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => alertBuilderForCupertino(
+          context,
+          'カレンダー追加失敗',
+          'カレンダーの追加に失敗しました'
+        )
+      );
+      return;
+    }
+    throw Exception(result.errors.join());
   }
 
 
@@ -224,7 +535,27 @@ class _GameDetailState extends State<GameDetail> {
                             ],
                           ),
                         ),
-                        // 商品説明
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: (){
+                                _calenderAccess();
+                              },
+                              icon: Icon(Icons.calendar_today),
+                              label: Text('カレンダー追加'),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: (){
+                              },
+                              icon: Icon(Icons.notifications_active),
+                              label: Text('通知を設定'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        // 内容紹介 TODO: デザイン
+                        Text("内容紹介"),
                         Container(
                           margin: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 30.0),
                           child: Text(game.itemCaption),
@@ -247,7 +578,6 @@ class _GameDetailState extends State<GameDetail> {
                           },
                         ),
                         const SizedBox(height: 40),
-                        
                       ],
                     ),
                   ),

@@ -47,6 +47,9 @@ dependencies:
   launch_review: ^3.0.1
   share: ^2.0.4
   google_mobile_ads: ^2.3.0
+  device_calendar: ^4.2.0
+  timezone: ^0.8.0
+  flutter_local_notifications: ^10.0.0
 
 dev_dependencies:
   flutter_test:
