@@ -8,6 +8,7 @@ import 'package:release/getx/game_getx.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:release/widget/common/system_widget.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/link.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -550,6 +551,14 @@ class _GameDetailState extends State<GameDetail> {
                               },
                               icon: Icon(Icons.notifications_active),
                               label: Text('通知を設定'),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: (){
+                                final share_msg = '${game.salesDate}に「${game.title}」が発売するよ！';
+                                Share.share(share_msg);
+                              },
+                              icon: Icon(Icons.ios_share),
+                              label: Text('SNS共有'),
                             ),
                           ],
                         ),
