@@ -40,7 +40,9 @@ class DeviceInfo {
       final iosDeviceInfo = await deviceInfo.iosInfo;
       deviceId = iosDeviceInfo.identifierForVendor;
     }
+
     var result = await ApiClient().registerDeviceInfo(deviceId);
+
     if (result) {
       // デバイスチェックしたらフラグを立てる
       _gameGetx.isDeviceCheck.value = true;

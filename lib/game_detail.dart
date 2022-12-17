@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get_navigation/src/routes/default_transitions.dart';
 import 'package:release/api/api.dart';
 import 'package:release/common/AdModBanner.dart';
+import 'package:release/common/local_notification.dart';
 import 'package:release/getx/game_getx.dart';
+import 'package:release/models/notification.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:release/widget/common/system_widget.dart';
@@ -47,23 +50,28 @@ class _GameDetailState extends State<GameDetail> {
 
   final _gameGetx = Get.put(GameGetx());
 
+  // カレンダー用変数
   String? _calenderId = "";
   String _calenderTitle = "";
-
   String _calenderYear = "2022";
   List<String> yearList = ["2022", "2023"];
   String _calenderMonth = "1";
   List<String> monthList = [];
   String _calenderDay = "1";
   List<String> dayList = [];
-
   String _calenderStartHour = "0";
   String _calenderEndHour = "0";
   List<String> hourList = [];
-
   String _calenderStartMinutes = "0";
   String _calenderEndMinutes = "0";
   List<String> minutesList = [];
+  
+  List<String> salesDateSplit = [];
+
+  String tuuchiText = "";
+
+  // 発売日が現在から見て将来の日付か
+  bool isFuture = false;
 
   @override
   void initState() {
@@ -73,10 +81,33 @@ class _GameDetailState extends State<GameDetail> {
     _calenderTitle = game.title;
 
     makeCalenderDataList();
-    var salesDateSplit = game.salesDate.split(RegExp(r'[年月日]'));
-    _calenderYear = salesDateSplit[0];
-    _calenderMonth = salesDateSplit[1];
-    _calenderDay = salesDateSplit[2];
+
+    // 発売日が日付ではなく「11月中」とかの場合は、通知ボタンは表示しない
+    if (!game.salesDate.contains("中")) {
+      salesDateSplit = game.salesDate.split(RegExp(r'[年月日]'));
+      _calenderYear = salesDateSplit[0];
+      _calenderMonth = salesDateSplit[1];
+      _calenderDay = salesDateSplit[2];
+
+      tuuchiText = game.isNotification ? "通知設定済" : "通知を設定";
+
+      final now = DateTime.now(); // 現在の日付
+      final sale_day = DateTime(int.parse(_calenderYear), int.parse(_calenderMonth), int.parse(_calenderDay)); // 発売日
+
+      setState(() {
+        isFuture = now.isBefore(sale_day) ? true : false;
+      });
+    }
+
+
+    print("---------------ゲーム情報---------------");
+    print(game.title);
+    print("ゲームid");
+    print(game.id);
+    print("お知らせ");
+    print(game.isNotification);
+    print("お知らせid");
+    print(game.notificationId);
   }
 
   void makeCalenderDataList() {
@@ -97,7 +128,7 @@ class _GameDetailState extends State<GameDetail> {
   /// ゲームをお気に入り登録する/解除する
   /// https://qiita.com/mamoru_takami/items/2d930ee927c048060741
   Future<void> favoriteGame(int gameId, bool doFavorite) async {
-    _gameGetx.setLoading(true);
+    // _gameGetx.setLoading(true);
 
     final deviceInfo = DeviceInfo();
     var result = false;
@@ -114,10 +145,10 @@ class _GameDetailState extends State<GameDetail> {
     if (result) {
       setState((){
         game.isFavorite = !game.isFavorite;
-        loading = false;
+        // loading = false;
       });
     }
-    _gameGetx.setLoading(false);
+    // _gameGetx.setLoading(false);
   }
 
   /// カレンダーにアクセスする (https://qiita.com/MLLB/items/984f1a5eed5d1c08d7ef)
@@ -342,7 +373,7 @@ class _GameDetailState extends State<GameDetail> {
   ///カレンダーに追加する
   void addCalender() async {
     // ローカルロケーションのタイムゾーンを東京に設定
-    setLocalLocation(getLocation("Asia/Tokyo")); 
+    setLocalLocation(getLocation("Asia/Tokyo"));
     final event = Event(
       _calenderId,
       title: _calenderTitle,
@@ -396,6 +427,80 @@ class _GameDetailState extends State<GameDetail> {
       return;
     }
     throw Exception(result.errors.join());
+  }
+
+
+  // ローカルの通知を設定
+  void _settingLocalNotification() {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text('通知設定'),
+          content: Text('発売日「${game.salesDate} 0時」に通知しますか？'),
+          actions: [
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              child: Text('キャンセル'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            CupertinoDialogAction(
+              child: Text('設定する'),
+              onPressed: () {
+                _notificationRegister();
+              },
+            ),
+          ],
+        );
+      }
+    );
+  }
+
+  late NotificationModel notification;
+
+  /// 通知設定
+  void _notificationRegister() async {
+    // 通知登録api叩く
+    notification = await ApiClient().notificationRegister(game.id);
+
+    // 通知
+    LocalNotification().requestIOSPermission();
+    LocalNotification().initializePlatformSpecifics();
+    LocalNotification().scheduleNotification(
+      salesDateSplit,
+      game.title,
+      notification.notificationId
+    );
+    setState(() {
+      tuuchiText = "通知設定済";
+      game.isNotification = true;
+      game.notificationId = notification.notificationId;
+    });
+    Navigator.pop(context);
+
+    LocalNotification().getPendingNotificationCount().then((value) =>
+      print('getPendingNotificationCount:' + value.toString())
+    );
+  }
+
+
+  /// 通知キャンセル
+  void _notificationCancel() async {
+    if (game.notificationId == null) {
+      print("通知idありませぬ");
+      return;
+    }
+    await ApiClient().notificationCancel(game.id, game.notificationId!);
+
+    setState(() {
+      tuuchiText = "通知を設定";
+      game.isNotification = false;
+    });
+    // 通知キャンセル
+    LocalNotification().cancelNotification(game.notificationId!);
+    print("通知キャンセルしやした 通知id: ${game.notificationId}");
   }
 
 
@@ -504,15 +609,6 @@ class _GameDetailState extends State<GameDetail> {
                                       Text("(平均: ${game.reviewAverage})"),
                                     ]
                                   ),
-                                  // お気に入り
-                                  // loading
-                                  // ?
-                                  // const SizedBox(
-                                  //   height: 25,
-                                  //   width: 25,
-                                  //   child: CircularProgressIndicator(),
-                                  // ) // ローディング
-                                  // :
                                   IconButton( // お気に入りアイコン
                                     icon: SizedBox(
                                       height: 25,
@@ -520,17 +616,28 @@ class _GameDetailState extends State<GameDetail> {
                                       child: Icon(
                                         game.isFavorite ? Icons.favorite : Icons.favorite_border,//追加
                                         color: game.isFavorite ? Colors.red : null,//追
-                                        // size: 25
                                       ),
                                     ),
                                     onPressed: () {
-                                      setState(() {
-                                        loading = true;
-                                      });
                                       // お気に入りapiを叩く
                                       favoriteGame(game.id, game.isFavorite);
                                     }
-                                  )
+                                  ),
+                                  isFuture ?
+                                  IconButton( // 通知アイコン
+                                    icon: SizedBox(
+                                      height: 25,
+                                      width: 25,
+                                      child: Icon(
+                                        game.isNotification ? Icons.notifications_active : Icons.notifications_none,//追加
+                                        color: game.isNotification ? Colors.red : null,//追
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      // 通知設定or通知キャンセル
+                                      game.isNotification ? _notificationCancel() : _settingLocalNotification();
+                                    }
+                                  ) : const SizedBox()
                                 ],
                               ),
                             ],
@@ -545,12 +652,6 @@ class _GameDetailState extends State<GameDetail> {
                               },
                               icon: Icon(Icons.calendar_today),
                               label: Text('カレンダー追加'),
-                            ),
-                            ElevatedButton.icon(
-                              onPressed: (){
-                              },
-                              icon: Icon(Icons.notifications_active),
-                              label: Text('通知を設定'),
                             ),
                             ElevatedButton.icon(
                               onPressed: (){

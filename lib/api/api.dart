@@ -6,11 +6,12 @@ import 'package:release/models/notice.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:release/models/game_info.dart';
+import 'package:release/models/notification.dart';
 
 class ApiClient {
 
-  // final host = 'localhost';
-  final host = 'yurubo0.com';
+  final host = 'localhost';
+  // final host = 'yurubo0.com';
 
   /// ステータスコードチェック
   checkStatusCode(response) {
@@ -40,7 +41,7 @@ class ApiClient {
       'device_id' : SharedPrefe.getDeviceId(),
     };
 
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/info',
       params
@@ -86,7 +87,7 @@ class ApiClient {
       'offset': '0',
     };
 
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/released',
       params
@@ -106,8 +107,7 @@ class ApiClient {
 
   /// デバイス情報登録
   Future registerDeviceInfo(String deviceId) async {
-    
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/register/device',
       {
@@ -128,7 +128,7 @@ class ApiClient {
 
   /// お気に入りゲーム一覧取得
   Future getFavoriteGameList() async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/favorite',
       {
@@ -150,7 +150,7 @@ class ApiClient {
 
   /// ゲームお気に入り登録
   Future<bool> addFavoriteGameApi(int gameId) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/add/favorite',
       {
@@ -168,7 +168,7 @@ class ApiClient {
 
   /// ゲームお気に入り解除
   Future<bool> removeFavoriteGameApi(int gameId) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/remove/favorite',
       {
@@ -189,7 +189,7 @@ class ApiClient {
 
   /// ゲーム詳細取得
   Future getGameDetail(int gameId) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/detail',
       {
@@ -210,7 +210,7 @@ class ApiClient {
 
     /// お問い合せ送信
   Future sendContactForm(String message) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/contact/message',
       {
@@ -227,9 +227,9 @@ class ApiClient {
   }
 
 
-    /// ゲーム詳細取得
+  /// ゲームお知らせ取得
   Future getNoticeList() async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/notice',
       {
@@ -247,6 +247,46 @@ class ApiClient {
       return NoticeModel.fromMap(e);
     }).toList();
   }
+
+
+  /// 通知登録
+  Future notificationRegister (int gameId) async {
+    final uri = Uri.http(
+      host,
+      '/api/notification/register',
+      {
+        'device_id' : SharedPrefe.getDeviceId(),
+        'game_id'   : '$gameId',
+      }
+    );
+    // api実行
+    final response = await http.post(uri);
+    // json型に変換
+    final responseJson = checkStatusCode(response);
+    // // GameInfoModel型に変換する
+    // return response.statusCode == 200 ? true : false;
+    final notification = responseJson['data'];
+
+    return NotificationModel.fromMap(notification);
+  }
+
+
+  /// 通知キャンセル
+  Future notificationCancel (int gameId, int notificationId) async {
+    final uri = Uri.http(
+      host,
+      '/api/notification/cancel',
+      {
+        'device_id'         : SharedPrefe.getDeviceId(),
+        'game_id'           : '$gameId',
+        'notification_id'   : '$notificationId',
+      }
+    );
+    // api実行
+    final response = await http.post(uri);
+    return response.statusCode == 200 ? true : false;
+  }
+
 
 }
 

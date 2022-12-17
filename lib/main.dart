@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:release/common/local_notification.dart';
 import 'package:release/common/shared_preferences.dart';
 import 'package:release/game_detail.dart';
 import 'package:release/game_favorite.dart';
@@ -23,6 +24,10 @@ import 'package:release/common/device_info.dart';
 
 import 'package:release/getx/game_getx.dart';
 import 'package:get/get.dart';
+
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 
 void main() async {
@@ -54,6 +59,9 @@ class InitWidget extends StatefulWidget {
 
 class _InitWidgetState extends State<InitWidget> {
 
+  // ローカル通知用
+  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
   // Getx読み込み
   final _gameGetx = Get.put(GameGetx());
 
@@ -79,10 +87,14 @@ class _InitWidgetState extends State<InitWidget> {
     });
   }
 
+
   @override
     // 最初に一度だけ呼ばれる
   void initState() {
     super.initState();
+    
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
     init();
   }
 

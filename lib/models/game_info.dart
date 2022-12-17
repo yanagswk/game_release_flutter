@@ -26,6 +26,10 @@ class GameInfoModel {
   final double reviewAverage;
   /// お気に入り済み
   bool isFavorite;
+  /// 通知設定済み
+  bool isNotification;
+  /// 通知id
+  int? notificationId;
 
 
   // コンストラクター
@@ -41,7 +45,9 @@ class GameInfoModel {
     required this.itemUrl,
     required this.reviewCount,
     required this.reviewAverage,
-    required this.isFavorite
+    required this.isFavorite,
+    required this.isNotification,
+    required this.notificationId,
   });
 
   /// ゲーム一覧用 Map<String, dynamic>からGameInfoModelへ変換する
@@ -61,7 +67,9 @@ class GameInfoModel {
       itemUrl: map['item_url'],
       reviewCount: map['review_count'],
       reviewAverage: map['review_average'].toDouble(),  // int型からdouble型へ変換
-      isFavorite: map['is_favorite']
+      isFavorite: map['is_favorite'],
+      isNotification: map['is_notification'],
+      notificationId: map['notification_id'],
     );
   }
 
@@ -82,7 +90,9 @@ class GameInfoModel {
       itemUrl: map['item_url'],
       reviewCount: map['review_count'],
       reviewAverage: map['review_average'].toDouble(),  // int型からdouble型へ変換
-      isFavorite: map['is_favorite']
+      isFavorite: map['is_favorite'],
+      isNotification: map['is_notification'],
+      notificationId: map['notification_id'],
     );
   }
 
