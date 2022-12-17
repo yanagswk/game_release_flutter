@@ -30,6 +30,8 @@ class GameInfoModel {
   bool isNotification;
   /// 通知id
   int? notificationId;
+  // 表示するか(お気に入り用)
+  bool? isDisplay;
 
 
   // コンストラクター
@@ -48,13 +50,13 @@ class GameInfoModel {
     required this.isFavorite,
     required this.isNotification,
     required this.notificationId,
+    this.isDisplay
   });
 
   /// ゲーム一覧用 Map<String, dynamic>からGameInfoModelへ変換する
   factory GameInfoModel.fromMap(Map<String, dynamic> map) {
     // 日付フォーマット
     // final sales_date = map['sales_date'].replaceFirst('-', '年').replaceFirst('-', '月');
-
     return GameInfoModel(
       id: map['id'],
       title: map['title'],
@@ -73,11 +75,33 @@ class GameInfoModel {
     );
   }
 
+  /// ゲーム一覧用 Map<String, dynamic>からGameInfoModelへ変換する
+  factory GameInfoModel.favoriteMap(Map<String, dynamic> map) {
+    // 日付フォーマット
+    // final sales_date = map['sales_date'].replaceFirst('-', '年').replaceFirst('-', '月');
+    return GameInfoModel(
+      id: map['id'],
+      title: map['title'],
+      hardware: map['hardware'],
+      price: map['price'],
+      salesDate: map['sales_date'],
+      largeImageUrl: map['large_image_url'],
+      label: map['label'],
+      itemCaption: map['item_caption'],
+      itemUrl: map['item_url'],
+      reviewCount: map['review_count'],
+      reviewAverage: map['review_average'].toDouble(),  // int型からdouble型へ変換
+      isFavorite: map['is_favorite'],
+      isNotification: map['is_notification'],
+      notificationId: map['notification_id'],
+      isDisplay: true
+    );
+  }
+
   /// ゲーム詳細用 Map<String, dynamic>からGameInfoModelへ変換する
   factory GameInfoModel.detailFromMap(Map<String, dynamic> map) {
     // 日付フォーマット
     // final sales_date = map['sales_date'].replaceFirst('-', '年').replaceFirst('-', '月');
-
     return GameInfoModel(
       id: map['id'],
       title: map['title'],

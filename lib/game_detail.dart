@@ -98,16 +98,6 @@ class _GameDetailState extends State<GameDetail> {
         isFuture = now.isBefore(sale_day) ? true : false;
       });
     }
-
-
-    print("---------------ゲーム情報---------------");
-    print(game.title);
-    print("ゲームid");
-    print(game.id);
-    print("お知らせ");
-    print(game.isNotification);
-    print("お知らせid");
-    print(game.notificationId);
   }
 
   void makeCalenderDataList() {
@@ -145,7 +135,10 @@ class _GameDetailState extends State<GameDetail> {
     if (result) {
       setState((){
         game.isFavorite = !game.isFavorite;
-        // loading = false;
+
+        if (game.isDisplay != null && game.isDisplay!) {
+          game.isDisplay = !game.isDisplay!;
+        }
       });
     }
     // _gameGetx.setLoading(false);

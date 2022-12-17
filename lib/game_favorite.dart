@@ -40,13 +40,13 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
 
   @override
   void initState() {
-    // 詳細画面からお気に入り一覧に戻ったとき、お気に入り一覧を取得し直す
+    // 詳細画面からお気に入り一覧に戻ったとき、お気に入り一覧を更新し直す
     ever(_gameGetx.isFavorite, (_) => {
       if (mounted) {
         _gameGetx.falseFavorite(),
         setState(() {
-          getFavoriteGame();
-        })
+          favoriteGames;
+        }),
       }
     });
 
@@ -58,8 +58,8 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: "お気に入り一覧"),  
-      body: 
+      appBar: MyAppBar(title: "お気に入り一覧"),
+      body:
         favoriteGames.length == 0
         ?
         Column(
@@ -74,7 +74,7 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
             AdModBanner()
           ],
         )
-        : 
+        :
         Column(
           children: [
             Expanded(
@@ -84,10 +84,14 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: favoriteGames.length,
                   itemBuilder: (context, index) {
-                    return GameCard(
-                      game: favoriteGames[index], 
-                      isFavoritePage: true
-                    );
+                    if (favoriteGames[index].isDisplay!) {
+                      return GameCard(
+                        game: favoriteGames[index],
+                        isFavoritePage: true
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
                   },
                 ),
               ),

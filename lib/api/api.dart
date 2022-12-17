@@ -143,7 +143,8 @@ class ApiClient {
 
     // GameInfoModel型に変換する
     return gameInfo.map((e) {
-      return GameInfoModel.fromMap(e);
+      // return GameInfoModel.fromMap(e);
+      return GameInfoModel.favoriteMap(e);
     }).toList();
   }
 

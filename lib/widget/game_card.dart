@@ -90,7 +90,7 @@ class _GameCardState extends State<GameCard> {
                 builder: (BuildContext context) => GameDetail(game: game),
               ),
             ).then((value) {
-              // 前の画面から戻った時
+              // お気に入り画面に、戻るとき
               if (isFavoritePage) {
                 gameGetx.trueFavorite();
               }
