@@ -50,6 +50,7 @@ dependencies:
   device_calendar: ^4.2.0
   timezone: ^0.9.0
   flutter_local_notifications: ^12.0.0
+  flutter_datetime_picker: ^1.5.1
 
 dev_dependencies:
   flutter_test:

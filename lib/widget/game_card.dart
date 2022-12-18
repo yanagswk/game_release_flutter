@@ -62,7 +62,7 @@ class _GameCardState extends State<GameCard> {
               image: DecorationImage(
                 fit: BoxFit.fitWidth,
                 image: NetworkImage(
-                  game.largeImageUrl,
+                  game.mainImgUrl,
                 ),
               ),
             ),

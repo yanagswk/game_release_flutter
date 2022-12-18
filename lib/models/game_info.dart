@@ -13,7 +13,7 @@ class GameInfoModel {
   /// 発売日
   final String salesDate;
   /// 画像URL
-  final String largeImageUrl;
+  final String mainImgUrl;
   /// 発売元
   final String label;
   /// 商品説明
@@ -41,7 +41,7 @@ class GameInfoModel {
     required this.hardware,
     required this.price,
     required this.salesDate,
-    required this.largeImageUrl,
+    required this.mainImgUrl,
     required this.label,
     required this.itemCaption,
     required this.itemUrl,
@@ -63,7 +63,7 @@ class GameInfoModel {
       hardware: map['hardware'],
       price: map['price'],
       salesDate: map['sales_date'],
-      largeImageUrl: map['large_image_url'],
+      mainImgUrl: map['main_img'],
       label: map['label'],
       itemCaption: map['item_caption'],
       itemUrl: map['item_url'],
@@ -85,7 +85,7 @@ class GameInfoModel {
       hardware: map['hardware'],
       price: map['price'],
       salesDate: map['sales_date'],
-      largeImageUrl: map['large_image_url'],
+      mainImgUrl: map['main_img'],
       label: map['label'],
       itemCaption: map['item_caption'],
       itemUrl: map['item_url'],
@@ -108,7 +108,7 @@ class GameInfoModel {
       hardware: map['hardware'],
       price: map['price'],
       salesDate: map['sales_date'],
-      largeImageUrl: map['large_image_url'],
+      mainImgUrl: map['main_img'],
       label: map['label'],
       itemCaption: map['item_caption'],
       itemUrl: map['item_url'],
@@ -119,7 +119,7 @@ class GameInfoModel {
       notificationId: map['notification_id'],
     );
   }
-
+// largeImageUrl
 
   /// Map型に変換
   Map toJson() => {
@@ -128,15 +128,13 @@ class GameInfoModel {
     'hardware': hardware,
     'price': price,
     'salesDate': salesDate,
-    'largeImageUrl': largeImageUrl,
+    'mainImgUrl': mainImgUrl,
     'label': label,
     'itemCaption': itemCaption,
     'itemUrl': itemUrl,
     'reviewCount': reviewCount,
     'reviewAverage': reviewAverage,
   };
-
-  
 }
 
 

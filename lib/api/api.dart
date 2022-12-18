@@ -66,7 +66,6 @@ class ApiClient {
     // return gameInfo.map((e) {
     //   return GameInfoModel.fromMap(e);
     // }).toList();
-    
   }
 
   /// 楽天apiから取得したゲーム情報を取得

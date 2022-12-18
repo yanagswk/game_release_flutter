@@ -25,6 +25,7 @@ import 'package:get/get.dart';
 import 'package:device_calendar/device_calendar.dart';
 import 'package:timezone/timezone.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 
 class GameDetail extends StatefulWidget {
@@ -65,10 +66,18 @@ class _GameDetailState extends State<GameDetail> {
   String _calenderStartMinutes = "0";
   String _calenderEndMinutes = "0";
   List<String> minutesList = [];
-  
+
   List<String> salesDateSplit = [];
 
   String tuuchiText = "";
+
+  late DateTime sale_day;
+
+  late DateTime startTime;
+  late DateTime endTime;
+
+  // 日付エラー
+  bool isDateError = false;
 
   // 発売日が現在から見て将来の日付か
   bool isFuture = false;
@@ -80,39 +89,149 @@ class _GameDetailState extends State<GameDetail> {
     game = widget.game;
     _calenderTitle = game.title;
 
-    makeCalenderDataList();
-
     // 発売日が日付ではなく「11月中」とかの場合は、通知ボタンは表示しない
     if (!game.salesDate.contains("中")) {
       salesDateSplit = game.salesDate.split(RegExp(r'[年月日]'));
       _calenderYear = salesDateSplit[0];
-      _calenderMonth = salesDateSplit[1];
       _calenderDay = salesDateSplit[2];
+      // 月が"01"の場合は"1"のする
+      if (salesDateSplit[1].contains("0")) {
+        _calenderMonth = salesDateSplit[1].replaceAll("0", "");
+      } else {
+        _calenderMonth = salesDateSplit[1];
+      }
 
       tuuchiText = game.isNotification ? "通知設定済" : "通知を設定";
 
       final now = DateTime.now(); // 現在の日付
-      final sale_day = DateTime(int.parse(_calenderYear), int.parse(_calenderMonth), int.parse(_calenderDay)); // 発売日
+      sale_day = DateTime(int.parse(_calenderYear), int.parse(_calenderMonth), int.parse(_calenderDay)); // 発売日
+
+      startTime = DateTime(
+        int.parse(_calenderYear),
+        int.parse(_calenderMonth),
+        int.parse(_calenderDay),
+        0,
+        0
+      );
+      endTime = DateTime(
+        int.parse(_calenderYear),
+        int.parse(_calenderMonth),
+        int.parse(_calenderDay),
+        0,
+        0
+      );
 
       setState(() {
         isFuture = now.isBefore(sale_day) ? true : false;
       });
+
+    } else {
+      // 「11月中」とかの場合
+      sale_day = DateTime.now();
+      _calenderYear = sale_day.year.toString();
+      _calenderMonth = sale_day.month.toString();
+      _calenderDay = sale_day.day.toString();
     }
   }
 
-  void makeCalenderDataList() {
-    for(int i = 0; i<=23; i++) {
-      hourList.add(i.toString());
+  String aaaaaaaaaa = "ああ";
+
+  // StatefulBuilderのsetState
+  late void Function(void Function()) testSetState;
+
+  ///カレンダーに追加する
+  void addCalender() async {
+
+    final start_date = TZDateTime.local(
+        int.parse(_calenderYear),
+        int.parse(_calenderMonth),
+        int.parse(_calenderDay),
+        int.parse(_calenderStartHour),
+        int.parse(_calenderStartMinutes),
+    );
+    final end_date = TZDateTime.local(
+        int.parse(_calenderYear),
+        int.parse(_calenderMonth),
+        int.parse(_calenderDay),
+        int.parse(_calenderEndHour),
+        int.parse(_calenderEndMinutes),
+    );
+
+    // 日付比較
+    final dateCheck = start_date.compareTo(end_date);
+    // 1の場合は、終了時間が開始時間よりも早い場合
+    if (dateCheck == 1) {
+      // ここでsetStateしても、StatefulBuilderだから？検知してくれない。testSetStateにStatefulBuilderで使っているsetStateを代入する。
+      // setState(() {
+      //   isDateError = true;
+      // });
+      testSetState(() {
+        isDateError = true;
+      });
+      return;
     }
-    for(int i = 0; i<=59; i++) {
-      minutesList.add(i.toString());
+    testSetState(() {
+      isDateError = false;
+    });
+    Navigator.of(context).pop();
+
+    // ローカルロケーションのタイムゾーンを東京に設定
+    setLocalLocation(getLocation("Asia/Tokyo"));
+    final event = Event(
+      _calenderId,
+      title: _calenderTitle,
+      start: TZDateTime.local(
+        int.parse(_calenderYear),
+        int.parse(_calenderMonth),
+        int.parse(_calenderDay),
+        int.parse(_calenderStartHour),
+        int.parse(_calenderStartMinutes),
+      ),
+      end: TZDateTime.local(
+        int.parse(_calenderYear),
+        int.parse(_calenderMonth),
+        int.parse(_calenderDay),
+        int.parse(_calenderEndHour),
+        int.parse(_calenderEndMinutes),
+      ),
+    );
+    final result = await DeviceCalendarPlugin().createOrUpdateEvent(event);
+    if(result == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => alertBuilderForCupertino(
+          context,
+          'カレンダー追加失敗',
+          'カレンダーの追加に失敗しました'
+        )
+      );
+      return;
     }
-    for(int i = 1; i<=12; i++) {
-      monthList.add(i.toString());
+    if(result.isSuccess){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => alertBuilderForCupertino(
+          context,
+          'カレンダー追加完了',
+          'カレンダーに追加しました'
+        )
+      );
+      return;
     }
-    for(int i = 1; i<=31; i++) {
-      dayList.add(i.toString());
+    if(result.hasErrors){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => alertBuilderForCupertino(
+          context,
+          'カレンダー追加失敗',
+          'カレンダーの追加に失敗しました'
+        )
+      );
+      print(result.errors[0].errorMessage);
+      throw Exception();
+      // return;
     }
+    throw Exception(result.errors.join());
   }
 
   /// ゲームをお気に入り登録する/解除する
@@ -215,8 +334,10 @@ class _GameDetailState extends State<GameDetail> {
                               foregroundColor: Colors.blue,
                             ),
                             onPressed: (){
+                              // addCalender()内で、setStateできないから、
+                              // StatefulBuilderのsetStateを使うために、変数に代入する
+                              testSetState = setState;
                               addCalender();
-                              Navigator.of(context).pop();
                             },
                             child: Text('追加'),
                           ),
@@ -239,121 +360,91 @@ class _GameDetailState extends State<GameDetail> {
                       child: TextFormField(controller: TextEditingController()),
                     ),
                     Text('日付選択'),
-                    Column(
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          children: [
-                            // 年
-                            DropdownButton(
-                              value: _calenderYear,
-                              items: yearList.map((String year) =>
-                                  DropdownMenuItem(
-                                    value: year,
-                                    child: Text('${year}年')
-                                  )).toList(),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _calenderYear = value!;
-                                });
-                              },
-                            ),
-                            // 月
-                            DropdownButton(
-                              value: _calenderMonth,
-                              items: monthList.map((String month) =>
-                                  DropdownMenuItem(
-                                    value: month,
-                                    child: Text('${month}月')
-                                  )).toList(),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _calenderMonth = value!;
-                                });
-                              },
-                            ),
-                            // 日
-                            DropdownButton(
-                              value: _calenderDay,
-                              items: dayList.map((String day) =>
-                                  DropdownMenuItem(
-                                    value: day,
-                                    child: Text('${day}日')
-                                  )).toList(),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _calenderDay = value!;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            // 時間
-                            DropdownButton(
-                              value: _calenderStartHour,
-                              items: hourList.map((String hour) =>
-                                  DropdownMenuItem(
-                                    value: hour,
-                                    child: Text('${hour}時')
-                                  )).toList(),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _calenderStartHour = value!;
-                                });
-                              },
-                            ),
-                            // 分
-                            DropdownButton(
-                              value: _calenderStartMinutes,
-                              items: minutesList.map((String minutes) =>
-                                  DropdownMenuItem(
-                                    value: minutes,
-                                    child: Text('${minutes}分')
-                                  )).toList(),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _calenderStartMinutes = value!;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            // 時間
-                            DropdownButton(
-                              value: _calenderEndHour,
-                              items: hourList.map((String hour) =>
-                                  DropdownMenuItem(
-                                    value: hour,
-                                    child: Text('${hour}時')
-                                  )).toList(),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _calenderEndHour = value!;
-                                });
-                              },
-                            ),
-                            // 分
-                            DropdownButton(
-                              value: _calenderEndMinutes,
-                              items: minutesList.map((String minutes) =>
-                                  DropdownMenuItem(
-                                    value: minutes,
-                                    child: Text('${minutes}分')
-                                  )).toList(),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _calenderEndHour = value!;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                    TextButton(
+                      onPressed: () {
+                        DatePicker.showDatePicker(context,
+                          showTitleActions: true,
+                          minTime: DateTime(2022, 1, 1,11,22),
+                          maxTime: DateTime(2023, 12, 31, 11, 22),
+                          onChanged: (date) {
+                            // ドラムスクロールで日付を変更した場合に検知。完了ボタンを押してなくても検知する。
+                            print('change $date');
+                          },
+                          onConfirm: (date) {
+                            // 日付を変更して完了ボタンを押したら検知
+                            setState(() {
+                              _calenderYear = date.year.toString();
+                              _calenderMonth = date.month.toString();
+                              _calenderDay = date.day.toString();
+                              sale_day = DateTime(date.year, date.month, date.day);
+                            });
+                          },
+                          currentTime: sale_day,
+                          locale: LocaleType.jp
+                        );
+                      },
+                      child: const Text(
+                        '生年月日を選択',
+                        style: TextStyle(color: Colors.blue),
+                      ),
                     ),
+                    Text("${_calenderYear}年${_calenderMonth}月${_calenderDay}日"),
+                    Text('開始時間選択'),
+                    TextButton(
+                      onPressed: () {
+                          DatePicker.showTimePicker(context,
+                          showTitleActions: true,
+                          showSecondsColumn: false, // 「秒」を表示するか 初期値true
+                          onConfirm: (date) {
+                            // 時間を変更して完了ボタンを押したら検知
+                            setState(() {
+                              _calenderStartHour = date.hour.toString();
+                              _calenderStartMinutes = date.minute.toString();
+                              startTime = DateTime(date.year, date.month, date.day, date.hour, date.minute);
+                            });
+                          },
+                          currentTime: startTime,
+                          locale: LocaleType.jp
+                        );
+                      },
+                      child: const Text(
+                        '開始時間を選択',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                    Text("${_calenderStartHour}時${_calenderStartMinutes}分"),
+                    Text('終了時間選択'),
+                    TextButton(
+                      onPressed: () {
+                          DatePicker.showTimePicker(context,
+                          showTitleActions: true,
+                          showSecondsColumn: false, // 「秒」を表示するか 初期値true
+                          onConfirm: (date) {
+                            // 時間を変更して完了ボタンを押したら検知
+                            setState(() {
+                              _calenderEndHour = date.hour.toString();
+                              _calenderEndMinutes = date.minute.toString();
+                              endTime = DateTime(date.year, date.month, date.day, date.hour, date.minute);
+                            });
+                          },
+                          currentTime: endTime,
+                          locale: LocaleType.jp
+                        );
+                      },
+                      child: const Text(
+                        '終了時間を選択',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                    Text("${_calenderEndHour}時${_calenderEndMinutes}分"),
+                    isDateError
+                      ? Text(
+                        "開始時間は、終了時間よりも前に設定してください。",
+                        style: TextStyle(
+                          color: Colors.red
+                        ),
+                      )
+                      : const SizedBox(),
                   ],
                 )
               );
@@ -363,64 +454,7 @@ class _GameDetailState extends State<GameDetail> {
     }
   }
 
-  ///カレンダーに追加する
-  void addCalender() async {
-    // ローカルロケーションのタイムゾーンを東京に設定
-    setLocalLocation(getLocation("Asia/Tokyo"));
-    final event = Event(
-      _calenderId,
-      title: _calenderTitle,
-      start: TZDateTime.local(
-        int.parse(_calenderYear),
-        int.parse(_calenderMonth),
-        int.parse(_calenderDay),
-        int.parse(_calenderStartHour),
-        int.parse(_calenderStartMinutes),
-      ),
-      end: TZDateTime.local(
-        int.parse(_calenderYear),
-        int.parse(_calenderMonth),
-        int.parse(_calenderDay),
-        int.parse(_calenderEndHour),
-        int.parse(_calenderEndMinutes),
-      ),
-    );
-    final result = await DeviceCalendarPlugin().createOrUpdateEvent(event);
-    if(result == null) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => alertBuilderForCupertino(
-          context,
-          'カレンダー追加失敗',
-          'カレンダーの追加に失敗しました'
-        )
-      );
-      return;
-    }
-    if(result.isSuccess){
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => alertBuilderForCupertino(
-          context,
-          'カレンダー追加完了',
-          'カレンダーに追加しました'
-        )
-      );
-      return;
-    }
-    if(!result.hasErrors){
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => alertBuilderForCupertino(
-          context,
-          'カレンダー追加失敗',
-          'カレンダーの追加に失敗しました'
-        )
-      );
-      return;
-    }
-    throw Exception(result.errors.join());
-  }
+
 
 
   // ローカルの通知を設定
@@ -552,7 +586,7 @@ class _GameDetailState extends State<GameDetail> {
                           width: 200,
                           height: 200,
                           child: Image.network(
-                            game.largeImageUrl,
+                            game.mainImgUrl,
                             errorBuilder: (c, o, s) {
                               return const Icon(
                                 Icons.downloading,
@@ -561,7 +595,6 @@ class _GameDetailState extends State<GameDetail> {
                             },
                           ),
                         ),
-                      
                         // 値段、評価点
                         Container(
                           margin: const EdgeInsets.all(30.0),
