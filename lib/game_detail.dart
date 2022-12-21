@@ -54,6 +54,7 @@ class _GameDetailState extends State<GameDetail> {
   // カレンダー用変数
   String? _calenderId = "";
   String _calenderTitle = "";
+  String _calenderDescription = "";
   String _calenderYear = "2022";
   List<String> yearList = ["2022", "2023"];
   String _calenderMonth = "1";
@@ -134,14 +135,11 @@ class _GameDetailState extends State<GameDetail> {
     }
   }
 
-  String aaaaaaaaaa = "ああ";
-
   // StatefulBuilderのsetState
   late void Function(void Function()) testSetState;
 
   ///カレンダーに追加する
   void addCalender() async {
-
     final start_date = TZDateTime.local(
         int.parse(_calenderYear),
         int.parse(_calenderMonth),
@@ -173,6 +171,7 @@ class _GameDetailState extends State<GameDetail> {
     testSetState(() {
       isDateError = false;
     });
+
     Navigator.of(context).pop();
 
     // ローカルロケーションのタイムゾーンを東京に設定
@@ -180,6 +179,7 @@ class _GameDetailState extends State<GameDetail> {
     final event = Event(
       _calenderId,
       title: _calenderTitle,
+      description: _calenderDescription,
       start: TZDateTime.local(
         int.parse(_calenderYear),
         int.parse(_calenderMonth),
@@ -307,145 +307,181 @@ class _GameDetailState extends State<GameDetail> {
                     topRight: Radius.circular(20),
                   ),
                 ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Padding(
+                  // padding: const EdgeInsets.all(2.0),
+                  padding: const EdgeInsets.symmetric(horizontal:20, vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.red,
+                              ),
+                              onPressed: (){
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('戻る')
+                            ),
+                            Text(
+                              'カレンダーに追加',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.blue,
+                              ),
+                              onPressed: (){
+                                // addCalender()内で、setStateできないから、
+                                // StatefulBuilderのsetStateを使うために、変数に代入する
+                                testSetState = setState;
+                                addCalender();
+                              },
+                              child: Text('追加'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'タイトル',
+                        style: TextStyle(fontWeight: FontWeight.bold)
+                      ),
+                      TextField(
+                        controller: TextEditingController(text: _calenderTitle),  //ここに初期値
+                        onChanged: (value) {
+                          _calenderTitle = value;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'メモ',
+                        style: TextStyle(fontWeight: FontWeight.bold)
+                      ),
+                      TextFormField(
+                        controller: TextEditingController(text: _calenderDescription),
+                        onChanged: (value) {
+                          _calenderDescription = value;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
                         children: [
-                          TextButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.red,
-                            ),
-                            onPressed: (){
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('戻る')
-                          ),
                           Text(
-                            'カレンダーに追加',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            '日付',
+                            style: TextStyle(fontWeight: FontWeight.bold)
                           ),
                           TextButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue,
-                            ),
-                            onPressed: (){
-                              // addCalender()内で、setStateできないから、
-                              // StatefulBuilderのsetStateを使うために、変数に代入する
-                              testSetState = setState;
-                              addCalender();
+                            onPressed: () {
+                              DatePicker.showDatePicker(context,
+                                showTitleActions: true,
+                                minTime: DateTime(2022, 1, 1,11,22),
+                                maxTime: DateTime(2023, 12, 31, 11, 22),
+                                onChanged: (date) {
+                                  // ドラムスクロールで日付を変更した場合に検知。完了ボタンを押してなくても検知する。
+                                  print('change $date');
+                                },
+                                onConfirm: (date) {
+                                  // 日付を変更して完了ボタンを押したら検知
+                                  setState(() {
+                                    _calenderYear = date.year.toString();
+                                    _calenderMonth = date.month.toString();
+                                    _calenderDay = date.day.toString();
+                                    sale_day = DateTime(date.year, date.month, date.day);
+                                  });
+                                },
+                                currentTime: sale_day,
+                                locale: LocaleType.jp
+                              );
                             },
-                            child: Text('追加'),
+                            child: const Text(
+                              '選択する',
+                              style: TextStyle(color: Colors.blue),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text('タイトル'),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: TextFormField(
-                        controller: TextEditingController(
-                          text: _calenderTitle
+                      Text("${_calenderYear}年${_calenderMonth}月${_calenderDay}日"),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Text(
+                            '開始時間',
+                            style: TextStyle(fontWeight: FontWeight.bold)
+                          ),
+                          TextButton(
+                            onPressed: () {
+                                DatePicker.showTimePicker(context,
+                                showTitleActions: true,
+                                showSecondsColumn: false, // 「秒」を表示するか 初期値true
+                                onConfirm: (date) {
+                                  // 時間を変更して完了ボタンを押したら検知
+                                  setState(() {
+                                    _calenderStartHour = date.hour.toString();
+                                    _calenderStartMinutes = date.minute.toString();
+                                    startTime = DateTime(date.year, date.month, date.day, date.hour, date.minute);
+                                  });
+                                },
+                                currentTime: startTime,
+                                locale: LocaleType.jp
+                              );
+                            },
+                            child: const Text(
+                              '選択する',
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text("${_calenderStartHour}時${_calenderStartMinutes}分"),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Text(
+                            '終了時間',
+                            style: TextStyle(fontWeight: FontWeight.bold)
+                          ),
+                          TextButton(
+                            onPressed: () {
+                                DatePicker.showTimePicker(context,
+                                showTitleActions: true,
+                                showSecondsColumn: false, // 「秒」を表示するか 初期値true
+                                onConfirm: (date) {
+                                  // 時間を変更して完了ボタンを押したら検知
+                                  setState(() {
+                                    _calenderEndHour = date.hour.toString();
+                                    _calenderEndMinutes = date.minute.toString();
+                                    endTime = DateTime(date.year, date.month, date.day, date.hour, date.minute);
+                                  });
+                                },
+                                currentTime: endTime,
+                                locale: LocaleType.jp
+                              );
+                            },
+                            child: const Text(
+                              '選択する',
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text("${_calenderEndHour}時${_calenderEndMinutes}分"),
+                      isDateError
+                        ? Text(
+                          "開始時間は、終了時間よりも前に設定してください。",
+                          style: TextStyle(
+                            color: Colors.red
+                          ),
                         )
-                      ),
-                    ),
-                    Text('買う場所・説明・補足'),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: TextFormField(controller: TextEditingController()),
-                    ),
-                    Text('日付選択'),
-                    TextButton(
-                      onPressed: () {
-                        DatePicker.showDatePicker(context,
-                          showTitleActions: true,
-                          minTime: DateTime(2022, 1, 1,11,22),
-                          maxTime: DateTime(2023, 12, 31, 11, 22),
-                          onChanged: (date) {
-                            // ドラムスクロールで日付を変更した場合に検知。完了ボタンを押してなくても検知する。
-                            print('change $date');
-                          },
-                          onConfirm: (date) {
-                            // 日付を変更して完了ボタンを押したら検知
-                            setState(() {
-                              _calenderYear = date.year.toString();
-                              _calenderMonth = date.month.toString();
-                              _calenderDay = date.day.toString();
-                              sale_day = DateTime(date.year, date.month, date.day);
-                            });
-                          },
-                          currentTime: sale_day,
-                          locale: LocaleType.jp
-                        );
-                      },
-                      child: const Text(
-                        '生年月日を選択',
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                    Text("${_calenderYear}年${_calenderMonth}月${_calenderDay}日"),
-                    Text('開始時間選択'),
-                    TextButton(
-                      onPressed: () {
-                          DatePicker.showTimePicker(context,
-                          showTitleActions: true,
-                          showSecondsColumn: false, // 「秒」を表示するか 初期値true
-                          onConfirm: (date) {
-                            // 時間を変更して完了ボタンを押したら検知
-                            setState(() {
-                              _calenderStartHour = date.hour.toString();
-                              _calenderStartMinutes = date.minute.toString();
-                              startTime = DateTime(date.year, date.month, date.day, date.hour, date.minute);
-                            });
-                          },
-                          currentTime: startTime,
-                          locale: LocaleType.jp
-                        );
-                      },
-                      child: const Text(
-                        '開始時間を選択',
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                    Text("${_calenderStartHour}時${_calenderStartMinutes}分"),
-                    Text('終了時間選択'),
-                    TextButton(
-                      onPressed: () {
-                          DatePicker.showTimePicker(context,
-                          showTitleActions: true,
-                          showSecondsColumn: false, // 「秒」を表示するか 初期値true
-                          onConfirm: (date) {
-                            // 時間を変更して完了ボタンを押したら検知
-                            setState(() {
-                              _calenderEndHour = date.hour.toString();
-                              _calenderEndMinutes = date.minute.toString();
-                              endTime = DateTime(date.year, date.month, date.day, date.hour, date.minute);
-                            });
-                          },
-                          currentTime: endTime,
-                          locale: LocaleType.jp
-                        );
-                      },
-                      child: const Text(
-                        '終了時間を選択',
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                    Text("${_calenderEndHour}時${_calenderEndMinutes}分"),
-                    isDateError
-                      ? Text(
-                        "開始時間は、終了時間よりも前に設定してください。",
-                        style: TextStyle(
-                          color: Colors.red
-                        ),
-                      )
-                      : const SizedBox(),
-                  ],
+                        : const SizedBox(),
+                    ],
+                  ),
                 )
               );
             }
@@ -575,7 +611,31 @@ class _GameDetailState extends State<GameDetail> {
                                           color: Colors.grey
                                         ),
                                       ),
-                                    )
+                                    ),
+                                    // テストおおお
+                                    // TextField(
+                                    //   controller: TextEditingController(text: _calenderTitle),  //ここに初期値
+                                    //   onChanged: (value) {
+                                    //     _calenderTitle = value;
+                                    //   },
+                                    // ),
+                                    // IconButton( // お気に入りアイコン
+                                    //   icon: SizedBox(
+                                    //     height: 25,
+                                    //     width: 25,
+                                    //     child: Icon(
+                                    //       Icons.favorite,//追加
+                                    //       color:Colors.red,//追
+                                    //     ),
+                                    //   ),
+                                    //   onPressed: () {
+                                    //     print("検知");
+                                    //     // setState(() {
+                                    //     //   _calenderTitle;
+                                    //     // });
+                                    //     print(_calenderTitle);
+                                    //   }
+                                    // ),
                                   ],
                                 ),
                               ),
