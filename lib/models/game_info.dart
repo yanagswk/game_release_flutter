@@ -20,6 +20,8 @@ class GameInfoModel {
   final String itemCaption;
   /// 商品URL
   final String itemUrl;
+  /// アフィリエイトurl
+  final String affiliateUrl;
   /// レビュー件数
   final int reviewCount;
   /// レビュー平均
@@ -45,6 +47,7 @@ class GameInfoModel {
     required this.label,
     required this.itemCaption,
     required this.itemUrl,
+    required this.affiliateUrl,
     required this.reviewCount,
     required this.reviewAverage,
     required this.isFavorite,
@@ -67,6 +70,7 @@ class GameInfoModel {
       label: map['label'],
       itemCaption: map['item_caption'],
       itemUrl: map['item_url'],
+      affiliateUrl: map['affiliate_url'],
       reviewCount: map['review_count'],
       reviewAverage: map['review_average'].toDouble(),  // int型からdouble型へ変換
       isFavorite: map['is_favorite'],
@@ -89,6 +93,7 @@ class GameInfoModel {
       label: map['label'],
       itemCaption: map['item_caption'],
       itemUrl: map['item_url'],
+      affiliateUrl: map['affiliate_url'],
       reviewCount: map['review_count'],
       reviewAverage: map['review_average'].toDouble(),  // int型からdouble型へ変換
       isFavorite: map['is_favorite'],
@@ -112,6 +117,7 @@ class GameInfoModel {
       label: map['label'],
       itemCaption: map['item_caption'],
       itemUrl: map['item_url'],
+      affiliateUrl: map['affiliate_url'],
       reviewCount: map['review_count'],
       reviewAverage: map['review_average'].toDouble(),  // int型からdouble型へ変換
       isFavorite: map['is_favorite'],
@@ -132,6 +138,7 @@ class GameInfoModel {
     'label': label,
     'itemCaption': itemCaption,
     'itemUrl': itemUrl,
+    'affiliateUrl': affiliateUrl,
     'reviewCount': reviewCount,
     'reviewAverage': reviewAverage,
   };

@@ -11,6 +11,7 @@ import 'package:release/models/notification.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:release/widget/common/system_widget.dart';
+import 'package:release/widget/hardware_chip.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/link.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -593,6 +594,8 @@ class _GameDetailState extends State<GameDetail> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    HardwareChip(hardware: game.hardware),
+                                    const SizedBox(height: 5),
                                     Container(
                                       margin: const EdgeInsets.only(bottom: 4.0),
                                       child: Text(
@@ -612,30 +615,6 @@ class _GameDetailState extends State<GameDetail> {
                                         ),
                                       ),
                                     ),
-                                    // テストおおお
-                                    // TextField(
-                                    //   controller: TextEditingController(text: _calenderTitle),  //ここに初期値
-                                    //   onChanged: (value) {
-                                    //     _calenderTitle = value;
-                                    //   },
-                                    // ),
-                                    // IconButton( // お気に入りアイコン
-                                    //   icon: SizedBox(
-                                    //     height: 25,
-                                    //     width: 25,
-                                    //     child: Icon(
-                                    //       Icons.favorite,//追加
-                                    //       color:Colors.red,//追
-                                    //     ),
-                                    //   ),
-                                    //   onPressed: () {
-                                    //     print("検知");
-                                    //     // setState(() {
-                                    //     //   _calenderTitle;
-                                    //     // });
-                                    //     print(_calenderTitle);
-                                    //   }
-                                    // ),
                                   ],
                                 ),
                               ),
@@ -657,7 +636,7 @@ class _GameDetailState extends State<GameDetail> {
                         ),
                         // 値段、評価点
                         Container(
-                          margin: const EdgeInsets.all(30.0),
+                          margin: const EdgeInsets.only(top: 30, left: 30, right: 30, bottom: 10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -726,52 +705,75 @@ class _GameDetailState extends State<GameDetail> {
                                   ) : const SizedBox()
                                 ],
                               ),
+                              Center(
+                                child: Link(
+                                uri: Uri.parse(game.affiliateUrl),
+                                target: LinkTarget.self,
+                                builder: (BuildContext ctx, FollowLink? openLink) {
+                                  return SizedBox(
+                                    width: 350,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.orange,
+                                        foregroundColor: Colors.white
+                                      ),
+                                    onPressed: openLink,
+                                    child: Text(
+                                      'Rakutenで購入',
+                                      style: TextStyle(fontWeight: FontWeight.bold)
+                                    ),
+                                  ),
+                                  );
+                                },
+                              ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  SizedBox(
+                                    width: 170,
+                                    child: ElevatedButton.icon(
+                                      onPressed: (){
+                                        _calenderAccess();
+                                      },
+                                      icon: Icon(Icons.calendar_today),
+                                      label: Text('カレンダー追加'),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 170,
+                                    child: ElevatedButton.icon(
+                                      onPressed: (){
+                                        final share_msg = '${game.salesDate}に「${game.title}」が発売するよ！';
+                                        Share.share(share_msg);
+                                      },
+                                      icon: Icon(Icons.ios_share),
+                                      label: Text('SNS共有'),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: (){
-                                _calenderAccess();
-                              },
-                              icon: Icon(Icons.calendar_today),
-                              label: Text('カレンダー追加'),
-                            ),
-                            ElevatedButton.icon(
-                              onPressed: (){
-                                final share_msg = '${game.salesDate}に「${game.title}」が発売するよ！';
-                                Share.share(share_msg);
-                              },
-                              icon: Icon(Icons.ios_share),
-                              label: Text('SNS共有'),
-                            ),
-                          ],
-                        ),
                         const SizedBox(height: 20),
-                        // 内容紹介 TODO: デザイン
-                        Text("内容紹介"),
                         Container(
                           margin: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 30.0),
-                          child: Text(game.itemCaption),
-                        ),
-                        Link(
-                          uri: Uri.parse(game.itemUrl),
-                          target: LinkTarget.self,
-                          builder: (BuildContext ctx, FollowLink? openLink) {
-                            return TextButton(
-                              onPressed: openLink,
-                              style: ButtonStyle(
-                                padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "内容紹介",
+                                    style: TextStyle(fontWeight: FontWeight.bold)
+                                  ),
+                                ],
                               ),
-                              child: const Text(
-                                '出典: Rakutenブックス',
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            );
-                          },
+                              const SizedBox(height: 10),
+                              Text(game.itemCaption),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 40),
                       ],
@@ -780,6 +782,8 @@ class _GameDetailState extends State<GameDetail> {
                 ),
                 // バナー広告
                 AdModBanner()
+
+                // onPressed: openLink,
               ],
             )
           ),
