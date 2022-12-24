@@ -189,7 +189,7 @@ class _GameListState extends State<GameList> {
     return Column(
         children: [
           // ハードウェア選択
-          const HardwareSelect(),
+          HardwareSelect(displayName: 'list'),
           // ゲーム一覧
           GameListInfinityView(
                 contents: groupGames,

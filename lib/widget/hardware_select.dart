@@ -5,7 +5,14 @@ import 'package:get/get.dart';
 
 /// ハードウェア選択用のウェジェット
 class HardwareSelect extends StatefulWidget {
-  const HardwareSelect({super.key});
+
+  // 画面名
+  String displayName;
+
+  HardwareSelect({
+    super.key,
+    required this.displayName
+  });
   @override
   State<HardwareSelect> createState() => _HardwareSelectState();
 }
@@ -21,9 +28,23 @@ class _HardwareSelectState extends State<HardwareSelect> {
   Future init() async {
     await SharedPrefe.init();
     setState(() {
-      // ハードウェア初期値をGetxに保存
-      _hardware = _gameGetx.hardware.value;
+      if (widget.displayName == "search") {
+        _hardware = _gameGetx.searchHardware.value;
+      } else {
+        // ハードウェア初期値をGetxに保存
+        _hardware = _gameGetx.hardware.value;
+      }
     });
+  }
+
+  void setHardWare(hardware) {
+    if (widget.displayName == "search") {
+      _gameGetx.setSearchHardware(hardware);
+      _hardware = hardware;
+    } else {
+      _gameGetx.setHardware(hardware);
+      _hardware = hardware;
+    }
   }
 
   @override
@@ -61,8 +82,7 @@ class _HardwareSelectState extends State<HardwareSelect> {
                       selectedColor: Colors.black,
                       onSelected: (_) {
                         setState(() {
-                          _gameGetx.setHardware('All');
-                          _hardware = 'All';
+                          setHardWare('All');
                         });
                       },
                     ),
@@ -78,8 +98,7 @@ class _HardwareSelectState extends State<HardwareSelect> {
                       selectedColor: Colors.red,
                       onSelected: (_) {
                         setState(() {
-                          _gameGetx.setHardware('Switch');
-                          _hardware = 'Switch';
+                          setHardWare('Switch');
                         });
                       },
                     ),
@@ -95,8 +114,7 @@ class _HardwareSelectState extends State<HardwareSelect> {
                       selectedColor: Colors.blue,
                       onSelected: (_) {
                         setState(() {
-                          _gameGetx.setHardware('PS5');
-                          _hardware = 'PS5';
+                          setHardWare('PS5');
                         });
                       },
                     ),
@@ -112,8 +130,7 @@ class _HardwareSelectState extends State<HardwareSelect> {
                       selectedColor: Colors.cyan,
                       onSelected: (_) {
                         setState(() {
-                          _gameGetx.setHardware('PS4');
-                          _hardware = 'PS4';
+                          setHardWare('PS4');
                         });
                       },
                     ),

@@ -84,6 +84,7 @@ class _InitWidgetState extends State<InitWidget> {
     setState(() {
       // ハードウェア初期値をGetxに保存
       _gameGetx.hardware.value = SharedPrefe.getTargetHardware();
+      // _gameGetx.searchHardware.value = SharedPrefe.getSearchTargetHardware();
     });
   }
 

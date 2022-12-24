@@ -7,6 +7,8 @@ class GameGetx extends GetxController {
 
   // 選択されたハードウェア(一覧画面)
   RxString hardware = ''.obs;
+  // 選択されたハードウェア(検索画面)
+  RxString searchHardware = ''.obs;
 
   // お気に入り検知
   RxBool isFavorite = false.obs;
@@ -27,6 +29,11 @@ class GameGetx extends GetxController {
   void setHardware(String target) async {
     hardware.value = target;
     SharedPrefe.setTargetHardware(target);
+  }
+  /// ハードウェア更新
+  void setSearchHardware(String target) async {
+    searchHardware.value = target;
+    // SharedPrefe.setSearchTargetHardware(target);
   }
 
   void trueFavorite() async {

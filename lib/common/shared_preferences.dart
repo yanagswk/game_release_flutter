@@ -28,6 +28,18 @@ class SharedPrefe {
   }
 
 
+  // /// ハードウェア設定(検索画面)
+  // static void setSearchTargetHardware(String hardware) {
+  //   prefs!.setString('searchTargetHardware', hardware);
+  // }
+
+
+  // /// ハードウェア取得(検索画面)
+  // static String getSearchTargetHardware() {
+  //   return prefs!.getString('searchTargetHardware') ?? "All";
+  // }
+
+
   /// デバイスid設定
   static void setDeviceId(String id) {
     prefs!.setString('deviceId', id);

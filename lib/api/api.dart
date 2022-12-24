@@ -66,15 +66,16 @@ class ApiClient {
 
   /// ゲーム検索
   Future getSearchGames({
+    required String hardware,
     required String searchWord,
     required int limit,
     required int offset,
   }) async {
     print("検索api実行");
-    print('searchWord: ${searchWord}, limit: ${limit}, offset: ${offset}');
+    print('searchWord: ${searchWord}, hardware: ${hardware} limit: ${limit}, offset: ${offset}');
 
     final params = {
-      'hardware': 'All',
+      'hardware': '$hardware',
       'search_word': '$searchWord',
       'limit': '$limit',
       'offset': '$offset',

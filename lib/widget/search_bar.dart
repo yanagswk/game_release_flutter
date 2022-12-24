@@ -35,6 +35,28 @@ class _SearchBarState extends State<SearchBar> {
   // 取得するゲームの開始位置
   int gameOffset = 0;
 
+    @override
+  void initState() {
+    super.initState();
+    _gameGetx.setSearchHardware('All');
+
+    // everでハードウェアの値を監視して、更新されたらapiを叩くために再描画する
+    ever(_gameGetx.searchHardware, (_) => {
+      if (mounted) {
+        // if (_gameGetx.isInitHardware.value) {
+          setState(() {
+            searchGames(true);
+          }),
+        // } else {
+          // 初回の空っぽのgameGetx.hardwareから、値がセットされた場合は、
+          // 再描画(setState)してほしくないから、フラグを立てる
+          // TODO: パワーコードだから修正したい
+          // _gameGetx.isInitHardware.value = true
+        // }
+      }
+    });
+  }
+
     /// ゲーム検索
   Future searchGames(bool isReset) async {
 
@@ -64,6 +86,7 @@ class _SearchBarState extends State<SearchBar> {
     
 
     final gameTest = await ApiClient().getSearchGames(
+        hardware: _gameGetx.searchHardware.value,
         searchWord: _searchWord,
         limit: gameLimit,
         offset: gameOffset,
@@ -93,10 +116,11 @@ class _SearchBarState extends State<SearchBar> {
     return TextField(
       onSubmitted: (value) {
         _searchWord = value;
-        print("------------検索クリック------------");
+        // _gameGetx.setSearchHardware('All'); //初期化
         searchGames(true);
       },
       autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
+      // focusNode:
       cursorColor: Colors.white, //カーソルの色
       style: const TextStyle( //テキストのスタイル
         color: Colors.white,
@@ -138,48 +162,48 @@ class _SearchBarState extends State<SearchBar> {
               )
             ]
           ),
-          body: games.length == 0
-            ?
-            Column(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(child: Text("")),
-                  ),
-                ),
-                // バナー広告
-                AdModBanner()
-              ],
-            )
-            :
-            Column(
-              children: [
-                // const SearchSelect(),
-                const HardwareSelect(),
-                // Expanded(
-                //   child: SingleChildScrollView(
-                //     child: ListView.builder(
-                //       shrinkWrap: true,
-                //       physics: NeverScrollableScrollPhysics(),
-                //       itemCount: games.length,
-                //       itemBuilder: (context, index) {
-                //         return GameCard(
-                //           game: games[index],
-                //           isFavoritePage: true
-                //         );
-                //       },
-                //     ),
-                //   ),
-                // ),
+          // body: games.length == 0
+          //   ?
+          //   Column(
+          //     children: [
+          //       Expanded(
+          //         child: Padding(
+          //           padding: const EdgeInsets.all(8.0),
+          //           child: Center(child: Text("")),
+          //         ),
+          //       ),
+          //       // バナー広告
+          //       AdModBanner()
+          //     ],
+          //   )
+          //   :
+          //   Column(
+          //     children: [
+          //       // const SearchSelect(),
+          //       HardwareSelect(displayName: 'search'),
+          //       SearchGameInfinityView(
+          //         contents: games,
+          //         getContents: searchGames,
+          //       ),
+          //       // バナー広告
+          //       AdModBanner()
+          //     ],
+          //   ),
+          body: Column(
+            children: [
+              HardwareSelect(displayName: 'search'),
+              games.length != 0
+                ?
                 SearchGameInfinityView(
                   contents: games,
                   getContents: searchGames,
-                ),
+                )
+                :
+                Expanded(child: Text("ヒットなし")),
                 // バナー広告
-                AdModBanner()
-              ],
-            ),
+                AdModBanner(),
+            ]
+          )
         ),
         Obx( // getxで検知するように
             // 全画面ローディング
