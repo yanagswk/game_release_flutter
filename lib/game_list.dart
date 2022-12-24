@@ -229,6 +229,7 @@ class _GameListInfinityViewState extends State<GameListInfinityView> {
   @override
   void initState() {
     _scrollController = ScrollController();
+    // print("ローディングして！！！！");
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent * 0.95 &&
@@ -297,8 +298,8 @@ class _GameListInfinityViewState extends State<GameListInfinityView> {
                 itemCount: widget.contents[salesDate]?.length,
                 itemBuilder: (context, gameIndex) {
                   return GameCard(
-                    game: widget.contents[salesDate]![gameIndex], 
-                    isFavoritePage: false,
+                    game: widget.contents[salesDate]![gameIndex],
+                    isDisplayDate: false,
                   );
                 },
               ),

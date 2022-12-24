@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 class GameGetx extends GetxController {
 
-  // 選択されたハードウェア
+  // 選択されたハードウェア(一覧画面)
   RxString hardware = ''.obs;
 
   // お気に入り検知

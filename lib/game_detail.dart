@@ -744,7 +744,7 @@ class _GameDetailState extends State<GameDetail> {
                                     width: 170,
                                     child: ElevatedButton.icon(
                                       onPressed: (){
-                                        final share_msg = '${game.salesDate}に「${game.title}」が発売するよ！';
+                                        final share_msg = '${game.salesDate}に「${game.title}」が発売するよ！ \n ${game.affiliateUrl}';
                                         Share.share(share_msg);
                                       },
                                       icon: Icon(Icons.ios_share),

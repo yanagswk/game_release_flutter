@@ -63,7 +63,7 @@ class _GameReleaseGroupState extends State<GameReleaseGroup> {
         
           return GameCard(
             game: game, 
-            isFavoritePage: true,
+            isDisplayDate: true,
           );
         }
       );

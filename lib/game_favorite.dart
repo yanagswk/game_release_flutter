@@ -87,7 +87,7 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
                     if (favoriteGames[index].isDisplay!) {
                       return GameCard(
                         game: favoriteGames[index],
-                        isFavoritePage: true
+                        isDisplayDate: true
                       );
                     } else {
                       return const SizedBox();

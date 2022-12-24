@@ -14,12 +14,12 @@ class GameCard extends StatefulWidget {
   // ゲーム情報
   GameInfoModel game;
   // 日付フラグ
-  bool isFavoritePage;
+  bool isDisplayDate;
 
   GameCard({
     super.key,
     required this.game,
-    required this.isFavoritePage,
+    required this.isDisplayDate,
   });
 
   @override
@@ -31,7 +31,7 @@ class _GameCardState extends State<GameCard> {
   // ゲーム情報
   late GameInfoModel game;
   // 日付フラグ
-  late bool isFavoritePage;
+  late bool isDisplayDate;
 
     // Getx読み込み
   final gameGetx = Get.put(GameGetx());
@@ -42,7 +42,7 @@ class _GameCardState extends State<GameCard> {
 
     // 受け取った値をを変数に設定
     game = widget.game;
-    isFavoritePage = widget.isFavoritePage;
+    isDisplayDate = widget.isDisplayDate;
 
     setState(() {});
   }
@@ -79,7 +79,7 @@ class _GameCardState extends State<GameCard> {
             children: [
               HardwareChip(hardware: game.hardware),
               Text('(税込) ${game.price}円'),
-              isFavoritePage ? Text(game.salesDate): const SizedBox.shrink(),  // フラグがfalseの時は、何も表示しない
+              isDisplayDate ? Text(game.salesDate): const SizedBox.shrink(),  // フラグがfalseの時は、何も表示しない
             ]
           ),
           trailing: const Icon(Icons.navigate_next),
@@ -91,7 +91,7 @@ class _GameCardState extends State<GameCard> {
               ),
             ).then((value) {
               // お気に入り画面に、戻るとき
-              if (isFavoritePage) {
+              if (isDisplayDate) {
                 gameGetx.trueFavorite();
               }
             }),

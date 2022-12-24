@@ -71,7 +71,7 @@ class ApiClient {
     required int offset,
   }) async {
     print("検索api実行");
-    // print('limit: ${limit}, offset: ${offset}, hardware: ${hardware}, isReleased: ${isReleased}');
+    print('searchWord: ${searchWord}, limit: ${limit}, offset: ${offset}');
 
     final params = {
       'hardware': 'All',
@@ -95,8 +95,6 @@ class ApiClient {
     final gameModel = gameInfo.map((e) {
       return GameInfoModel.fromMap(e);
     }).toList();
-
-    print(gameModel);
 
     return {
       'game_count': responseJson['game_count'],

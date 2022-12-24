@@ -3,6 +3,7 @@ import 'package:release/api/api.dart';
 import 'package:release/common/AdModBanner.dart';
 import 'package:release/common/shared_preferences.dart';
 import 'package:release/getx/game_getx.dart';
+import 'package:release/models/game_info.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:release/widget/game_card.dart';
 import 'package:get/get.dart';
@@ -22,38 +23,51 @@ class _SearchBarState extends State<SearchBar> {
   // 検索ワード
   String _searchWord = "";
 
-  int targetCount = 0;
 
-  List games = [];
+  List<GameInfoModel> games = [];
 
   // Getx読み込み
   final _gameGetx = Get.put(GameGetx());
 
+  int targetCount = 0;
+  // 取得するゲーム数
+  int gameLimit = 40;
+  // 取得するゲームの開始位置
+  int gameOffset = 0;
+
     /// ゲーム検索
-  Future searchGames() async {
+  Future searchGames(bool isReset) async {
+
+    if (isReset) {
+      setState(() {
+        games = [];
+      });
+      gameOffset = 0;
+      targetCount = 0;
+      SharedPrefe.setIsPaging(true);
+    }
+
+
+    // 総数よりも大きくなったらreturnする
+    if (targetCount != 0 && targetCount < gameOffset) {
+      SharedPrefe.setIsPaging(false);
+      return ;
+    }
 
     _gameGetx.setLoading(true);
 
-    // 総数よりも大きくなったらreturnする
-    // if (targetCount != 0 && targetCount < gameOffset) {
-    //   SharedPrefe.setIsPaging(false);
-    //   return ;
-    // }
 
     // _choiceIndex = SharedPrefe.getString('targetHardware');
 
-    setState(() {
-      games = [];
-    });
+    // await SharedPrefe.init();
+
+    
 
     final gameTest = await ApiClient().getSearchGames(
         searchWord: _searchWord,
-        limit: 40,
-        offset: 0,
+        limit: gameLimit,
+        offset: gameOffset,
     );
-
-    print("やあ");
-    print(gameTest);
 
     if (gameTest['game'].isEmpty) {
       _gameGetx.setLoading(false);
@@ -62,27 +76,11 @@ class _SearchBarState extends State<SearchBar> {
 
     targetCount = gameTest['game_count'];
 
+    print("全部で");
+    print(targetCount);
+
     games.addAll(gameTest['game']);
-
-    // print("検索ゲーム取得");
-    // print(games);
-
-    // -----------TODO: のちに修正したい ここから-----------
-    // 例えばPS4のゲーム一覧で、画面がスクロール状態の時に、PS5を選択すると、
-    // 初回APIが2回叩かれてしまう事があるので、重複したものを省いている
-    // final gameIdList = games.map((e) => e.id);
-    // gameTest['game'].forEach((element) {
-    //   if (!gameIdList.contains(element.id)) {
-    //     // 含んでいなかったら追加する
-    //     games.add(element);
-    //   }
-    // });
-    // -----------TODO: ここまで-----------
-
-    // final gameGroupTest = groupBy(games, (obj) => obj.salesDate);
-
-    // groupGames.addAll(gameGroupTest);
-    // gameOffset += gameLimit;
+    gameOffset += gameLimit;
 
     // 参考: https://teratail.com/questions/286406
     setState(() {});
@@ -95,7 +93,8 @@ class _SearchBarState extends State<SearchBar> {
     return TextField(
       onSubmitted: (value) {
         _searchWord = value;
-        searchGames();
+        print("------------検索クリック------------");
+        searchGames(true);
       },
       autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
       cursorColor: Colors.white, //カーソルの色
@@ -119,7 +118,6 @@ class _SearchBarState extends State<SearchBar> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -159,20 +157,24 @@ class _SearchBarState extends State<SearchBar> {
               children: [
                 // const SearchSelect(),
                 const HardwareSelect(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: games.length,
-                      itemBuilder: (context, index) {
-                        return GameCard(
-                          game: games[index],
-                          isFavoritePage: true
-                        );
-                      },
-                    ),
-                  ),
+                // Expanded(
+                //   child: SingleChildScrollView(
+                //     child: ListView.builder(
+                //       shrinkWrap: true,
+                //       physics: NeverScrollableScrollPhysics(),
+                //       itemCount: games.length,
+                //       itemBuilder: (context, index) {
+                //         return GameCard(
+                //           game: games[index],
+                //           isFavoritePage: true
+                //         );
+                //       },
+                //     ),
+                //   ),
+                // ),
+                SearchGameInfinityView(
+                  contents: games,
+                  getContents: searchGames,
                 ),
                 // バナー広告
                 AdModBanner()
@@ -186,6 +188,82 @@ class _SearchBarState extends State<SearchBar> {
             )
           ),
       ],
+      ),
+    );
+  }
+}
+
+
+
+
+
+// -------------インフィニティスクロール-------------
+class SearchGameInfinityView extends StatefulWidget {
+  // ゲーム一覧
+  final List<GameInfoModel> contents;
+  // ゲームを取得する関数
+  final Future<dynamic> Function(bool) getContents;
+
+  const SearchGameInfinityView({
+    Key? key,
+    required this.contents,
+    required this.getContents,
+  }) : super(key: key);
+
+  @override
+  State<SearchGameInfinityView> createState() => _SearchGameInfinityViewState();
+}
+
+class _SearchGameInfinityViewState extends State<SearchGameInfinityView> {
+  late ScrollController _scrollController;
+  bool _isLoading = false;
+
+  bool isPaging = true;
+
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(() async {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent * 0.95 &&
+          !_isLoading) {
+
+        isPaging = SharedPrefe.getIsPaging();
+        if (!isPaging) {
+          setState (() {});
+          return;
+        }
+
+        _isLoading = true;
+        await widget.getContents(false);
+        setState (() {
+          _isLoading = false;
+        });
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  Flexible(  // https://rayt-log.com/%E3%80%90flutter%E3%80%91column%E3%81%AE%E4%B8%AD%E3%81%A7listview-builder%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95/
+      child: ListView.builder(
+        // shrinkWrap: true, // ListView.builderをネストする時に指定 https://www.choge-blog.com/programming/flutterlistview-nest/
+        // physics: const NeverScrollableScrollPhysics(), // ListView.builderをネストする時に指定
+        controller: _scrollController,
+        itemCount: widget.contents.length,
+        itemBuilder: (context, gameIndex) {
+          return GameCard(
+            game: widget.contents[gameIndex],
+            isDisplayDate: true,
+          );
+        },
       ),
     );
   }
