@@ -92,7 +92,7 @@ class _InitWidgetState extends State<InitWidget> {
     // 最初に一度だけ呼ばれる
   void initState() {
     super.initState();
-    
+
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
     init();

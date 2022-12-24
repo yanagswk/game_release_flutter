@@ -12,6 +12,7 @@ import 'package:release/widget/hardware_select.dart';
 
 import 'package:release/getx/game_getx.dart';
 import 'package:get/get.dart';
+import 'package:release/widget/search_bar.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -25,6 +26,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   var _tabIndex = 0;
   TabController? _tabController;
+
+  // 検索画面判定
+  bool _isSearchMood = false;
 
   @override
   void initState() {
@@ -62,6 +66,17 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             color: Colors.white
           ),
         ),
+        actions: [
+          IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            // 検索画面へ
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SearchBar()),
+            );
+          })
+        ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(48),
           child: ColoredBox(

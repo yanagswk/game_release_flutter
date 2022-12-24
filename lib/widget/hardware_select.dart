@@ -120,7 +120,7 @@ class _HardwareSelectState extends State<HardwareSelect> {
                   ],
                 )
               ],
-            ),  
+            ),
           )
         ],
       ),

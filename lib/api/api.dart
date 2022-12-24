@@ -61,11 +61,47 @@ class ApiClient {
       'game_count': responseJson['game_count'],
       'game': gameModel
     };
+  }
 
-    // GameInfoModel型に変換する
-    // return gameInfo.map((e) {
-    //   return GameInfoModel.fromMap(e);
-    // }).toList();
+
+  /// ゲーム検索
+  Future getSearchGames({
+    required String searchWord,
+    required int limit,
+    required int offset,
+  }) async {
+    print("検索api実行");
+    // print('limit: ${limit}, offset: ${offset}, hardware: ${hardware}, isReleased: ${isReleased}');
+
+    final params = {
+      'hardware': 'All',
+      'search_word': '$searchWord',
+      'limit': '$limit',
+      'offset': '$offset',
+      'device_id' : SharedPrefe.getDeviceId(),
+    };
+
+    final uri = Uri.http(
+      host,
+      '/api/games/info',
+      params
+    );
+    // api実行
+    final response = await http.get(uri);
+    final responseJson = checkStatusCode(response);
+
+    final List gameInfo = responseJson['games'];
+
+    final gameModel = gameInfo.map((e) {
+      return GameInfoModel.fromMap(e);
+    }).toList();
+
+    print(gameModel);
+
+    return {
+      'game_count': responseJson['game_count'],
+      'game': gameModel
+    };
   }
 
   /// 楽天apiから取得したゲーム情報を取得
