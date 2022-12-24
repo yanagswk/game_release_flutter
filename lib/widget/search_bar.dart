@@ -125,31 +125,34 @@ class _SearchBarState extends State<SearchBar> {
 
   // 検索用の入力widget
   Widget _searchTextField() {
-    return TextField(
-      focusNode: _focus,
-      onSubmitted: (value) {
-        _searchWord = value;
-        searchGames(true);
-      },
-      autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
-      // focusNode:
-      cursorColor: Colors.white, //カーソルの色
-      style: const TextStyle( //テキストのスタイル
-        color: Colors.white,
-        fontSize: 20,
-      ),
-      textInputAction: TextInputAction.search, //キーボードのアクションボタンを指定
-      decoration: const InputDecoration( //TextFiledのスタイル
-        enabledBorder: UnderlineInputBorder( //デフォルトのTextFieldの枠線
-          borderSide: BorderSide(color: Colors.white)
+    return SizedBox(
+      height: 40,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.blue),
+          borderRadius: BorderRadius.circular(8.0),
         ),
-        focusedBorder: UnderlineInputBorder( //TextFieldにフォーカス時の枠線
-          borderSide: BorderSide(color: Colors.white)
-        ),
-        hintText: 'ゲームを検索', //何も入力してないときに表示されるテキスト
-        hintStyle: TextStyle( //hintTextのスタイル
-          color: Colors.white60,
-          fontSize: 20,
+        child: Center(
+          child: Container(
+            width: 340,
+            margin: const EdgeInsets.symmetric(vertical: 10.0),
+            child: TextField(
+              autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
+              decoration: const InputDecoration(
+                hintText: 'ゲームを検索',
+                contentPadding: EdgeInsets.only(left: 8.0),
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                isDense: true,
+              ),
+              onSubmitted: (value) {
+                _searchWord = value;
+                searchGames(true);
+              },
+              focusNode: _focus,
+            ),
+          ),
         ),
       ),
     );

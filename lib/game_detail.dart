@@ -28,6 +28,8 @@ import 'package:timezone/timezone.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 
 class GameDetail extends StatefulWidget {
 
@@ -706,26 +708,26 @@ class _GameDetailState extends State<GameDetail> {
                                 ],
                               ),
                               Center(
-                                child: Link(
-                                uri: Uri.parse(game.affiliateUrl),
-                                target: LinkTarget.self,
-                                builder: (BuildContext ctx, FollowLink? openLink) {
-                                  return SizedBox(
-                                    width: 350,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.orange,
-                                        foregroundColor: Colors.white
-                                      ),
-                                    onPressed: openLink,
+                                child: SizedBox(
+                                  width: 350,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.orange,
+                                      foregroundColor: Colors.white
+                                    ),
+                                    onPressed: () {
+                                      final url = Uri.parse(game.affiliateUrl);
+                                      launchUrl(
+                                        url,
+                                        mode: LaunchMode.externalApplication,   // デフォルトのブラウザで開く(参考: https://zenn.dev/tsuruo/articles/56f3abbb132f90)
+                                      );
+                                    },
                                     child: Text(
                                       'Rakutenで購入',
                                       style: TextStyle(fontWeight: FontWeight.bold)
                                     ),
                                   ),
-                                  );
-                                },
-                              ),
+                                ),
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
