@@ -128,7 +128,7 @@ class _GameListState extends State<GameList> {
 
   /// これから発売するゲーム情報取得
   Future getGameList(bool isReset, bool chageHardware) async {
-    if (chageHardware) _gameGetx.setLoading(true);
+    _gameGetx.setLoading(true);
 
     await SharedPrefe.init();
 
@@ -143,6 +143,7 @@ class _GameListState extends State<GameList> {
     // 総数よりも大きくなったらreturnする
     if (targetCount != 0 && targetCount < gameOffset) {
       SharedPrefe.setIsPaging(false);
+      _gameGetx.setLoading(false);
       return ;
     }
 
@@ -179,8 +180,8 @@ class _GameListState extends State<GameList> {
 
       // 参考: https://teratail.com/questions/286406
       setState(() {});
-      if (chageHardware) _gameGetx.setLoading(false);
     }
+    _gameGetx.setLoading(false);
   }
 
 
@@ -264,15 +265,15 @@ class _GameListInfinityViewState extends State<GameListInfinityView> {
         controller: _scrollController,
         itemCount: widget.contents.length,
         itemBuilder: (context, groupIndex) {
-          if (widget.contents.length - 1 == groupIndex && isPaging) {
-            return const SizedBox(
-              height: 35,
-              width: 30,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
+          // if (widget.contents.length - 1 == groupIndex && isPaging) {
+          //   return const SizedBox(
+          //     height: 35,
+          //     width: 30,
+          //     child: Center(
+          //       child: CircularProgressIndicator(),
+          //     ),
+          //   );
+          // }
           final salesDate = widget.contents.keys.elementAt(groupIndex);
           return Column(
             children: [
