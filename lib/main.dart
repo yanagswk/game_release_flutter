@@ -130,7 +130,8 @@ class _InitWidgetState extends State<InitWidget> {
           Obx( // getxで検知するように
             // 全画面ローディング
             () => OverlayLoadingMolecules(
-              visible: _gameGetx.isLoading.value
+              visible: _gameGetx.isLoading.value,
+              isLoading: true
             )
           ),
         ],

@@ -23,7 +23,7 @@ class _SearchBarState extends State<SearchBar> {
   // 検索ワード
   String _searchWord = "";
 
-
+  // ゲーム一覧
   List<GameInfoModel> games = [];
 
   // Getx読み込み
@@ -35,10 +35,16 @@ class _SearchBarState extends State<SearchBar> {
   // 取得するゲームの開始位置
   int gameOffset = 0;
 
+  // 入力欄のフォーカス
+  FocusNode _focus = new FocusNode();
+  bool _isFocus = false;
+
     @override
   void initState() {
     super.initState();
     _gameGetx.setSearchHardware('All');
+
+    _focus.addListener(_onFocusChange);
 
     // everでハードウェアの値を監視して、更新されたらapiを叩くために再描画する
     ever(_gameGetx.searchHardware, (_) => {
@@ -53,6 +59,20 @@ class _SearchBarState extends State<SearchBar> {
           // TODO: パワーコードだから修正したい
           // _gameGetx.isInitHardware.value = true
         // }
+      }
+    });
+  }
+
+  void _onFocusChange() {
+    print("Focus: " + _focus.hasFocus.toString());
+    setState(() {
+      _isFocus = _focus.hasFocus;
+
+      // 入力欄がフォーカス状態なら、画面を覆う
+      if (_isFocus) {
+        _gameGetx.setSearchLoading(true);
+      } else {
+        _gameGetx.setSearchLoading(false);
       }
     });
   }
@@ -78,13 +98,6 @@ class _SearchBarState extends State<SearchBar> {
 
     _gameGetx.setLoading(true);
 
-
-    // _choiceIndex = SharedPrefe.getString('targetHardware');
-
-    // await SharedPrefe.init();
-
-    
-
     final gameTest = await ApiClient().getSearchGames(
         hardware: _gameGetx.searchHardware.value,
         searchWord: _searchWord,
@@ -107,16 +120,15 @@ class _SearchBarState extends State<SearchBar> {
 
     // 参考: https://teratail.com/questions/286406
     setState(() {});
-    // if (chageHardware) 
     _gameGetx.setLoading(false);
   }
 
   // 検索用の入力widget
   Widget _searchTextField() {
     return TextField(
+      focusNode: _focus,
       onSubmitted: (value) {
         _searchWord = value;
-        // _gameGetx.setSearchHardware('All'); //初期化
         searchGames(true);
       },
       autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
@@ -162,63 +174,48 @@ class _SearchBarState extends State<SearchBar> {
               )
             ]
           ),
-          // body: games.length == 0
-          //   ?
-          //   Column(
-          //     children: [
-          //       Expanded(
-          //         child: Padding(
-          //           padding: const EdgeInsets.all(8.0),
-          //           child: Center(child: Text("")),
-          //         ),
-          //       ),
-          //       // バナー広告
-          //       AdModBanner()
-          //     ],
-          //   )
-          //   :
-          //   Column(
-          //     children: [
-          //       // const SearchSelect(),
-          //       HardwareSelect(displayName: 'search'),
-          //       SearchGameInfinityView(
-          //         contents: games,
-          //         getContents: searchGames,
-          //       ),
-          //       // バナー広告
-          //       AdModBanner()
-          //     ],
-          //   ),
-          body: Column(
-            children: [
-              HardwareSelect(displayName: 'search'),
-              games.length != 0
-                ?
-                SearchGameInfinityView(
-                  contents: games,
-                  getContents: searchGames,
-                )
-                :
-                Expanded(child: Text("ヒットなし")),
-                // バナー広告
-                AdModBanner(),
-            ]
+          body: ClipRect(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Column(
+                  children: [
+                    HardwareSelect(displayName: 'search'),
+                    games.length != 0
+                      ?
+                      SearchGameInfinityView(
+                        contents: games,
+                        getContents: searchGames,
+                      )
+                      :
+                      Expanded(child: Text("")),
+                      // バナー広告
+                      AdModBanner(),
+                  ]
+                ),
+                Obx( // getxで検知するように
+                  // 入力欄以外を覆う
+                  () => OverlayLoadingMolecules(
+                    visible: _gameGetx.isSearchLoading.value,
+                    isLoading: false
+                  )
+                ),
+              ],
+            ),
           )
         ),
         Obx( // getxで検知するように
-            // 全画面ローディング
-            () => OverlayLoadingMolecules(
-              visible: _gameGetx.isLoading.value
-            )
-          ),
+          // 全画面ローディング
+          () => OverlayLoadingMolecules(
+            visible: _gameGetx.isLoading.value,
+            isLoading: true
+          )
+        ),
       ],
       ),
     );
   }
 }
-
-
-
 
 
 // -------------インフィニティスクロール-------------
@@ -278,8 +275,6 @@ class _SearchGameInfinityViewState extends State<SearchGameInfinityView> {
   Widget build(BuildContext context) {
     return  Flexible(  // https://rayt-log.com/%E3%80%90flutter%E3%80%91column%E3%81%AE%E4%B8%AD%E3%81%A7listview-builder%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95/
       child: ListView.builder(
-        // shrinkWrap: true, // ListView.builderをネストする時に指定 https://www.choge-blog.com/programming/flutterlistview-nest/
-        // physics: const NeverScrollableScrollPhysics(), // ListView.builderをネストする時に指定
         controller: _scrollController,
         itemCount: widget.contents.length,
         itemBuilder: (context, gameIndex) {

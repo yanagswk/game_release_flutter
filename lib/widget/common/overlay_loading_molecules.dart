@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 // 全面表示のローディング
 //
 class OverlayLoadingMolecules extends StatelessWidget {
+
+  late bool isLoading;
+
   OverlayLoadingMolecules({
-    required this.visible
+    required this.visible,
+    required this.isLoading,
   });
 
   //表示状態
@@ -22,8 +26,13 @@ class OverlayLoadingMolecules extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                isLoading
+                ?
                 CircularProgressIndicator(
-                    valueColor: new AlwaysStoppedAnimation<Color>(Colors.white))
+                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.white)
+                )
+                :
+                const SizedBox()
               ],
             ),
           )

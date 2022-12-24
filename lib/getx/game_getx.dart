@@ -18,7 +18,8 @@ class GameGetx extends GetxController {
 
   // ローディングフラグ
   RxBool isLoading = false.obs;
-  // RxBool isLoading = true.obs;
+
+  RxBool isSearchLoading = false.obs;
 
   // デバイスチェックフラグ
   RxBool isDeviceCheck = false.obs;
@@ -45,6 +46,9 @@ class GameGetx extends GetxController {
 
   void setLoading(bool status) async {
     isLoading.value = status;
+  }
+  void setSearchLoading(bool status) async {
+    isSearchLoading.value = status;
   }
   // void falseFavorite() async {
   //   isFavorite.value = false;

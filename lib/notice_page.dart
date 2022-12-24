@@ -100,7 +100,8 @@ class _NoticePageState extends State<NoticePage> {
           Obx( // getxで検知するように
             // 全画面ローディング
             () => OverlayLoadingMolecules(
-              visible: _gameGetx.isLoading.value
+              visible: _gameGetx.isLoading.value,
+              isLoading: true
             )
           ),
         ]
