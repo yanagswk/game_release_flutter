@@ -116,9 +116,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           controller: _tabController,
           children: [
             // これから発売
-            GameList(isReleased: false),
+            GameList(isReleased: 2),
             // 発売済み
-            GameList(isReleased: true),
+            GameList(isReleased: 1),
         ],
       )
     );

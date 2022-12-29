@@ -8,6 +8,8 @@ import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:release/widget/game_card.dart';
 import 'package:get/get.dart';
 import 'package:release/widget/hardware_select.dart';
+import 'package:release/widget/released_year_select.dart';
+import 'package:release/widget/search_result.dart';
 import 'package:release/widget/search_select.dart.dart';
 
 /// AppBar用のクラス
@@ -39,89 +41,47 @@ class _SearchBarState extends State<SearchBar> {
   FocusNode _focus = new FocusNode();
   bool _isFocus = false;
 
+
+  final List<int> _yearList = [2023, 2022, 2021, 2020];
+
     @override
   void initState() {
     super.initState();
-    _gameGetx.setSearchHardware('All');
+    // _gameGetx.setSearchHardware('All');
 
-    _focus.addListener(_onFocusChange);
+    // _focus.addListener(_onFocusChange);
 
-    // everでハードウェアの値を監視して、更新されたらapiを叩くために再描画する
-    ever(_gameGetx.searchHardware, (_) => {
-      if (mounted) {
-        // if (_gameGetx.isInitHardware.value) {
-          setState(() {
-            searchGames(true);
-          }),
-        // } else {
-          // 初回の空っぽのgameGetx.hardwareから、値がセットされた場合は、
-          // 再描画(setState)してほしくないから、フラグを立てる
-          // TODO: パワーコードだから修正したい
-          // _gameGetx.isInitHardware.value = true
-        // }
-      }
-    });
+    // // everでハードウェアの値を監視して、更新されたらapiを叩くために再描画する
+    // ever(_gameGetx.searchHardware, (_) => {
+    //   if (mounted) {
+    //     // if (_gameGetx.isInitHardware.value) {
+    //       setState(() {
+    //         searchGames(true);
+    //       }),
+    //     // } else {
+    //       // 初回の空っぽのgameGetx.hardwareから、値がセットされた場合は、
+    //       // 再描画(setState)してほしくないから、フラグを立てる
+    //       // TODO: パワーコードだから修正したい
+    //       // _gameGetx.isInitHardware.value = true
+    //     // }
+    //   }
+    // });
   }
 
-  void _onFocusChange() {
-    print("Focus: " + _focus.hasFocus.toString());
-    setState(() {
-      _isFocus = _focus.hasFocus;
+  // void _onFocusChange() {
+  //   print("Focus: " + _focus.hasFocus.toString());
+  //   setState(() {
+  //     _isFocus = _focus.hasFocus;
 
-      // 入力欄がフォーカス状態なら、画面を覆う
-      if (_isFocus) {
-        _gameGetx.setSearchLoading(true);
-      } else {
-        _gameGetx.setSearchLoading(false);
-      }
-    });
-  }
+  //     // 入力欄がフォーカス状態なら、画面を覆う
+  //     if (_isFocus) {
+  //       _gameGetx.setSearchLoading(true);
+  //     } else {
+  //       _gameGetx.setSearchLoading(false);
+  //     }
+  //   });
+  // }
 
-    /// ゲーム検索
-  Future searchGames(bool isReset) async {
-
-    if (isReset) {
-      setState(() {
-        games = [];
-      });
-      gameOffset = 0;
-      targetCount = 0;
-      SharedPrefe.setIsPaging(true);
-    }
-
-
-    // 総数よりも大きくなったらreturnする
-    if (targetCount != 0 && targetCount < gameOffset) {
-      SharedPrefe.setIsPaging(false);
-      return ;
-    }
-
-    _gameGetx.setLoading(true);
-
-    final gameTest = await ApiClient().getSearchGames(
-        hardware: _gameGetx.searchHardware.value,
-        searchWord: _searchWord,
-        limit: gameLimit,
-        offset: gameOffset,
-    );
-
-    if (gameTest['game'].isEmpty) {
-      _gameGetx.setLoading(false);
-      return;
-    }
-
-    targetCount = gameTest['game_count'];
-
-    print("全部で");
-    print(targetCount);
-
-    games.addAll(gameTest['game']);
-    gameOffset += gameLimit;
-
-    // 参考: https://teratail.com/questions/286406
-    setState(() {});
-    _gameGetx.setLoading(false);
-  }
 
   // 検索用の入力widget
   Widget _searchTextField() {
@@ -148,7 +108,12 @@ class _SearchBarState extends State<SearchBar> {
               ),
               onSubmitted: (value) {
                 _searchWord = value;
-                searchGames(true);
+                // searchGames(true);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => SearchResult(searchWord: value),
+                  ),
+                );
               },
               focusNode: _focus,
             ),
@@ -157,6 +122,7 @@ class _SearchBarState extends State<SearchBar> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -187,37 +153,69 @@ class _SearchBarState extends State<SearchBar> {
               children: [
                 Column(
                   children: [
-                    HardwareSelect(displayName: 'search'),
-                    games.length != 0
-                      ?
-                      SearchGameInfinityView(
-                        contents: games,
-                        getContents: searchGames,
-                      )
-                      :
+                    Text("発売した年から探す"),
+                    // ReleasedYearSelect(),
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Wrap(
+                            spacing: 10,
+                            children: _yearList.map((int year) =>
+                              ActionChip(
+                                label: Text(
+                                  "${year}年",
+                                  style: TextStyle(
+                                    color: Colors.white
+                                  ),
+                                ),
+                                backgroundColor: Colors.grey[500],
+                                onPressed:() {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) => SearchResult(year: year),
+                                    ),
+                                  );
+                                }
+                              ),
+                            ).toList(),
+                          )
+                        ],
+                      ),
+                    ),
+
+                    // games.length != 0
+                    //   ?
+                    //   SearchGameInfinityView(
+                    //     contents: games,
+                    //     getContents: searchGames,
+                    //   )
+                    //   :
+                      // Expanded(child: Text("")),
                       Expanded(child: Text("")),
+
                       // バナー広告
                       AdModBanner(),
                   ]
                 ),
-                Obx( // getxで検知するように
-                  // 入力欄以外を覆う
-                  () => OverlayLoadingMolecules(
-                    visible: _gameGetx.isSearchLoading.value,
-                    isLoading: false
-                  )
-                ),
+                // Obx( // getxで検知するように
+                //   // 入力欄以外を覆う
+                //   () => OverlayLoadingMolecules(
+                //     visible: _gameGetx.isSearchLoading.value,
+                //     isLoading: false
+                //   )
+                // ),
               ],
             ),
           )
         ),
-        Obx( // getxで検知するように
-          // 全画面ローディング
-          () => OverlayLoadingMolecules(
-            visible: _gameGetx.isLoading.value,
-            isLoading: true
-          )
-        ),
+        // Obx( // getxで検知するように
+        //   // 全画面ローディング
+        //   () => OverlayLoadingMolecules(
+        //     visible: _gameGetx.isLoading.value,
+        //     isLoading: true
+        //   )
+        // ),
       ],
       ),
     );
@@ -225,72 +223,4 @@ class _SearchBarState extends State<SearchBar> {
 }
 
 
-// -------------インフィニティスクロール-------------
-class SearchGameInfinityView extends StatefulWidget {
-  // ゲーム一覧
-  final List<GameInfoModel> contents;
-  // ゲームを取得する関数
-  final Future<dynamic> Function(bool) getContents;
-
-  const SearchGameInfinityView({
-    Key? key,
-    required this.contents,
-    required this.getContents,
-  }) : super(key: key);
-
-  @override
-  State<SearchGameInfinityView> createState() => _SearchGameInfinityViewState();
-}
-
-class _SearchGameInfinityViewState extends State<SearchGameInfinityView> {
-  late ScrollController _scrollController;
-  bool _isLoading = false;
-
-  bool isPaging = true;
-
-  @override
-  void initState() {
-    _scrollController = ScrollController();
-    _scrollController.addListener(() async {
-      if (_scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent * 0.95 &&
-          !_isLoading) {
-
-        isPaging = SharedPrefe.getIsPaging();
-        if (!isPaging) {
-          setState (() {});
-          return;
-        }
-
-        _isLoading = true;
-        await widget.getContents(false);
-        setState (() {
-          _isLoading = false;
-        });
-      }
-    });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return  Flexible(  // https://rayt-log.com/%E3%80%90flutter%E3%80%91column%E3%81%AE%E4%B8%AD%E3%81%A7listview-builder%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95/
-      child: ListView.builder(
-        controller: _scrollController,
-        itemCount: widget.contents.length,
-        itemBuilder: (context, gameIndex) {
-          return GameCard(
-            game: widget.contents[gameIndex],
-            isDisplayDate: true,
-          );
-        },
-      ),
-    );
-  }
-}
+// --------

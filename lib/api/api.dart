@@ -10,8 +10,8 @@ import 'package:release/models/notification.dart';
 
 class ApiClient {
 
-  // final host = 'localhost';
-  final host = 'yurubo0.com';
+  final host = 'localhost';
+  // final host = 'yurubo0.com';
 
   /// ステータスコードチェック
   checkStatusCode(response) {
@@ -28,20 +28,26 @@ class ApiClient {
     required String hardware,
     required int limit,
     required int offset,
-    required bool isReleased,
+    required int isReleased,
+    int? releasedYear,
+    int? releasedMonth,
   }) async {
     print("api実行");
-    print('limit: ${limit}, offset: ${offset}, hardware: ${hardware}, isReleased: ${isReleased}');
+    print(
+      'limit: ${limit},offset: ${offset}, hardware: ${hardware}, isReleased: ${isReleased}, releasedYear: ${releasedYear}, releasedMonth: ${releasedMonth}'
+    );
 
     final params = {
       'hardware': '$hardware',
       'limit': '$limit',
       'offset': '$offset',
-      'is_released': '${isReleased ? 1 : 0}',
+      'is_released': '${isReleased}',
       'device_id' : SharedPrefe.getDeviceId(),
+      'releasedYear': '${releasedYear}',
+      'releasedMonth': '${releasedMonth}',
     };
 
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/info',
       params
@@ -70,9 +76,14 @@ class ApiClient {
     required String searchWord,
     required int limit,
     required int offset,
+    int? year,
+    String? month,
+    String? sort
   }) async {
     print("検索api実行");
-    print('searchWord: ${searchWord}, hardware: ${hardware} limit: ${limit}, offset: ${offset}');
+    print(
+      'limit: ${limit},offset: ${offset}, hardware: ${hardware}, search_year: ${year}, search_month: ${month}, search_word: ${searchWord}'
+    );
 
     final params = {
       'hardware': '$hardware',
@@ -80,9 +91,55 @@ class ApiClient {
       'limit': '$limit',
       'offset': '$offset',
       'device_id' : SharedPrefe.getDeviceId(),
+      'search_year': '$year',
+      'search_month': '$month',
+      'sort': '$sort',
     };
 
-    final uri = Uri.https(
+    final uri = Uri.http(
+      host,
+      '/api/games/info',
+      params
+    );
+    // api実行
+    final response = await http.get(uri);
+    final responseJson = checkStatusCode(response);
+
+    final List gameInfo = responseJson['games'];
+
+    final gameModel = gameInfo.map((e) {
+      return GameInfoModel.fromMap(e);
+    }).toList();
+
+    return {
+      'game_count': responseJson['game_count'],
+      'game': gameModel
+    };
+  }
+
+  /// ゲーム検索
+  Future getSearchWordGames({
+    required String hardware,
+    required String searchWord,
+    required int limit,
+    required int offset,
+    String? sort
+  }) async {
+    print("検索api実行");
+    print(
+      'limit: ${limit},offset: ${offset}, hardware: ${hardware}, search_word: ${searchWord}'
+    );
+
+    final params = {
+      'hardware': '$hardware',
+      'search_word': '$searchWord',
+      'limit': '$limit',
+      'offset': '$offset',
+      'device_id' : SharedPrefe.getDeviceId(),
+      'sort': '$sort',
+    };
+
+    final uri = Uri.http(
       host,
       '/api/games/info',
       params
@@ -121,7 +178,7 @@ class ApiClient {
       'offset': '0',
     };
 
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/released',
       params
@@ -141,7 +198,7 @@ class ApiClient {
 
   /// デバイス情報登録
   Future registerDeviceInfo(String deviceId) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/register/device',
       {
@@ -162,7 +219,7 @@ class ApiClient {
 
   /// お気に入りゲーム一覧取得
   Future getFavoriteGameList() async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/favorite',
       {
@@ -185,7 +242,7 @@ class ApiClient {
 
   /// ゲームお気に入り登録
   Future<bool> addFavoriteGameApi(int gameId) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/add/favorite',
       {
@@ -203,7 +260,7 @@ class ApiClient {
 
   /// ゲームお気に入り解除
   Future<bool> removeFavoriteGameApi(int gameId) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/remove/favorite',
       {
@@ -224,7 +281,7 @@ class ApiClient {
 
   /// ゲーム詳細取得
   Future getGameDetail(int gameId) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/games/detail',
       {
@@ -245,7 +302,7 @@ class ApiClient {
 
     /// お問い合せ送信
   Future sendContactForm(String message) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/contact/message',
       {
@@ -264,7 +321,7 @@ class ApiClient {
 
   /// ゲームお知らせ取得
   Future getNoticeList() async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/notice',
       {
@@ -286,7 +343,7 @@ class ApiClient {
 
   /// 通知登録
   Future notificationRegister (int gameId) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/notification/register',
       {
@@ -308,7 +365,7 @@ class ApiClient {
 
   /// 通知キャンセル
   Future notificationCancel (int gameId, int notificationId) async {
-    final uri = Uri.https(
+    final uri = Uri.http(
       host,
       '/api/notification/cancel',
       {

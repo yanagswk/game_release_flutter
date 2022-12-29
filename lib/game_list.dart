@@ -22,7 +22,7 @@ import 'package:get/get.dart';
 class GameList extends StatefulWidget {
   // 発売日フラグ
   // true:発売済み, false:これから発売
-  bool isReleased;
+  int isReleased;
 
   GameList({
     super.key,
@@ -40,7 +40,7 @@ class _GameListState extends State<GameList> {
   final _gameGetx = Get.put(GameGetx());
 
   // 発売日フラグ
-  bool isReleased = false;
+  int isReleased = 2;
 
   // 選択されたハードウェア
   String _choiceIndex = '';
