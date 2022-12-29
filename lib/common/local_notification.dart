@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:permission_handler/permission_handler.dart';
 
 // 参考
 // https://take424.dev/2021/05/22/flutter%E3%81%A7%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E9%80%9A%E7%9F%A5%E3%81%AE%E5%8B%95%E4%BD%9C%E3%82%92%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B%EF%BC%8Fflutter_local_notifications/
@@ -21,9 +22,20 @@ class LocalNotification {
           badge: true,
           sound: false,
         );
-
-        print("押されたよ！ 1");
     }
+  }
+
+
+  /// 通知設定を許可しているか
+  /// https://halzoblog.com/error-bug-diary/20220506-2/#:~:text=%E9%80%9A%E7%9F%A5%E8%A8%B1%E5%8F%AF%E7%A2%BA%E8%AA%8D%E3%81%AE%E3%83%80%E3%82%A4%E3%82%A2%E3%83%AD%E3%82%B0,%E8%B5%B7%E5%8B%95%E6%99%82%E3%81%AB%E7%99%BA%E5%8B%95%E3%81%95%E3%82%8C%E3%82%8B%E3%80%82&text=Permission.notification.request()%3B
+  Future checkNotification() async {
+    // permission_handler で通知に対する許可状態を把握
+    var statusForNotificationO = await Permission.notification.status;
+
+    print("statusForNotificationO: $statusForNotificationO");
+
+    // PermissionStatus.granted: 許可している PermissionStatus.denied: 許可していない
+    return statusForNotificationO == PermissionStatus.granted ? true : false;
   }
 
 
@@ -47,7 +59,7 @@ class LocalNotification {
         // 通知をタップしたときに発火する
         onDidReceiveNotificationResponse: (NotificationResponse res) {
           // debugPrint('payload:${res.payload}');
-          print("押されたよ！ 2");
+          print("bbbbbbbbbb");
         });
   }
 
@@ -122,7 +134,7 @@ class LocalNotification {
           0,
           0
         ),
-        // DateTime(2022,12,17,14,06),
+        // DateTime(2022,12,29,14,49),
         tz.local
       ),
       platformChannelSpecifics,

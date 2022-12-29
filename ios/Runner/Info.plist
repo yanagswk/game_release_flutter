@@ -57,5 +57,8 @@
 	<string>Access most functions for calendar viewing and editing.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Access contacts for event attendee editing.</string>
+	<key>PermissionGroupNotification</key>
+    <string>ローカル通知をするため</string>
+    <!-- ↑flutter_local_notificationsの設定で許可ダイアログを出すので、実際はこの文章は使われない模様 -->
 </dict>
 </plist>

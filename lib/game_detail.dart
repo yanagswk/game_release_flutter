@@ -515,7 +515,8 @@ class _GameDetailState extends State<GameDetail> {
             CupertinoDialogAction(
               child: Text('設定する'),
               onPressed: () {
-                _notificationRegister();
+                //  通知
+                _setNotification();
               },
             ),
           ],
@@ -526,12 +527,11 @@ class _GameDetailState extends State<GameDetail> {
 
   late NotificationModel notification;
 
-  /// 通知設定
-  void _notificationRegister() async {
+  // 通知設定
+  Future _setNotification() async {
     // 通知登録api叩く
     notification = await ApiClient().notificationRegister(game.id);
 
-    // 通知
     LocalNotification().requestIOSPermission();
     LocalNotification().initializePlatformSpecifics();
     LocalNotification().scheduleNotification(
@@ -539,16 +539,39 @@ class _GameDetailState extends State<GameDetail> {
       game.title,
       notification.notificationId
     );
+
+    LocalNotification().getPendingNotificationCount().then((value) =>
+      print('getPendingNotificationCount:' + value.toString())
+    );
+
     setState(() {
       tuuchiText = "通知設定済";
       game.isNotification = true;
       game.notificationId = notification.notificationId;
     });
-    Navigator.pop(context);
 
-    LocalNotification().getPendingNotificationCount().then((value) =>
-      print('getPendingNotificationCount:' + value.toString())
-    );
+    Navigator.pop(context);
+  }
+
+
+  /// 通知チェック
+  void _notificationRegister() async {
+
+    // 通知設定チェック
+    var isNotification = await LocalNotification().checkNotification();
+
+    if (!isNotification) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => alertBuilderForCupertino(
+          context,
+          'アプリの通知を許可してください',
+          'アプリの通知がオフになっています。\n設定アプリからこのアプリの通知を許可してください。'
+        )
+      );
+      return;
+    }
+    _settingLocalNotification();
   }
 
 
@@ -706,7 +729,8 @@ class _GameDetailState extends State<GameDetail> {
                                     ),
                                     onPressed: () {
                                       // 通知設定or通知キャンセル
-                                      game.isNotification ? _notificationCancel() : _settingLocalNotification();
+                                      // game.isNotification ? _notificationCancel() : _settingLocalNotification();
+                                      game.isNotification ? _notificationCancel() : _notificationRegister();
                                     }
                                   ) : const SizedBox(),
 
@@ -756,32 +780,6 @@ class _GameDetailState extends State<GameDetail> {
                                     ),
                                   ),
                                 ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  // SizedBox(
-                                  //   width: 170,
-                                  //   child: ElevatedButton.icon(
-                                  //     onPressed: (){
-                                  //       _calenderAccess();
-                                  //     },
-                                  //     icon: Icon(Icons.calendar_today),
-                                  //     label: Text('カレンダー追加'),
-                                  //   ),
-                                  // ),
-                                  SizedBox(
-                                    width: 170,
-                                    child: ElevatedButton.icon(
-                                      onPressed: (){
-                                        final share_msg = '${game.salesDate}に「${game.title}」が発売するよ！ \n ${game.affiliateUrl}';
-                                        Share.share(share_msg);
-                                      },
-                                      icon: Icon(Icons.ios_share),
-                                      label: Text('SNS共有'),
-                                    ),
-                                  ),
-                                ],
                               ),
                             ],
                           ),

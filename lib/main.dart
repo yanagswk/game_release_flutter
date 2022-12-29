@@ -97,6 +97,9 @@ class _InitWidgetState extends State<InitWidget> {
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
     init();
+
+    // 初回起動時に、アプリの通知設定のポップアップを出す
+    LocalNotification().requestIOSPermission();
   }
 
   @override
