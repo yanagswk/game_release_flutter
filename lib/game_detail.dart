@@ -270,11 +270,24 @@ class _GameDetailState extends State<GameDetail> {
   Future _calenderAccess() async {
     var _deviceCalendarPlugin = new DeviceCalendarPlugin();
     var permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
+
     // カレンダーアクセス許可
     if (permissionsGranted.isSuccess && !permissionsGranted.data!) {
       permissionsGranted = await _deviceCalendarPlugin.requestPermissions();
+
       if (!permissionsGranted.isSuccess || !permissionsGranted.data!) {
         // throw Exception("Not granted access to your calendar");
+        // カレンダーへのアクセスを拒否したとき
+        print("カレンダーへのアクセスが拒否されてます");
+        // showDialog(
+        //   context: context,
+        //   builder: (BuildContext context) => alertBuilderForCupertino(
+        //     context,
+        //     'カレンダーのアクセス許可してください',
+        //     'カレンダーのアクセスがオフになっています。\n設定アプリからカレンダーのアクセスを許可してください。'
+        //   )
+        // );
+        return;
       }
     }
 
