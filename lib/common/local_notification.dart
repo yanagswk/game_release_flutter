@@ -21,6 +21,8 @@ class LocalNotification {
           badge: true,
           sound: false,
         );
+
+        print("押されたよ！ 1");
     }
   }
 
@@ -45,6 +47,7 @@ class LocalNotification {
         // 通知をタップしたときに発火する
         onDidReceiveNotificationResponse: (NotificationResponse res) {
           // debugPrint('payload:${res.payload}');
+          print("押されたよ！ 2");
         });
   }
 

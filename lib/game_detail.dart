@@ -274,7 +274,7 @@ class _GameDetailState extends State<GameDetail> {
     if (permissionsGranted.isSuccess && !permissionsGranted.data!) {
       permissionsGranted = await _deviceCalendarPlugin.requestPermissions();
       if (!permissionsGranted.isSuccess || !permissionsGranted.data!) {
-        throw Exception("Not granted access to your calendar");
+        // throw Exception("Not granted access to your calendar");
       }
     }
 
@@ -676,6 +676,10 @@ class _GameDetailState extends State<GameDetail> {
                                       Text("(平均: ${game.reviewAverage})"),
                                     ]
                                   ),
+                                ],
+                              ),
+                              Row(
+                                children: [
                                   IconButton( // お気に入りアイコン
                                     icon: SizedBox(
                                       height: 25,
@@ -704,7 +708,31 @@ class _GameDetailState extends State<GameDetail> {
                                       // 通知設定or通知キャンセル
                                       game.isNotification ? _notificationCancel() : _settingLocalNotification();
                                     }
-                                  ) : const SizedBox()
+                                  ) : const SizedBox(),
+
+                                  IconButton( // カレンダー追加
+                                    icon: SizedBox(
+                                      height: 25,
+                                      width: 25,
+                                      child: Icon(Icons.calendar_today),
+                                    ),
+                                    onPressed: () {
+                                      // カレンダー追加
+                                      _calenderAccess();
+                                    }
+                                  ),
+                                  IconButton( // SNS共有
+                                    icon: SizedBox(
+                                      height: 25,
+                                      width: 25,
+                                      child: Icon(Icons.ios_share),
+                                    ),
+                                    onPressed: () {
+                                      // SNS共有
+                                      final share_msg = '${game.salesDate}に「${game.title}」が発売するよ！ \n ${game.affiliateUrl}';
+                                      Share.share(share_msg);
+                                    }
+                                  ),
                                 ],
                               ),
                               Center(
@@ -732,16 +760,16 @@ class _GameDetailState extends State<GameDetail> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  SizedBox(
-                                    width: 170,
-                                    child: ElevatedButton.icon(
-                                      onPressed: (){
-                                        _calenderAccess();
-                                      },
-                                      icon: Icon(Icons.calendar_today),
-                                      label: Text('カレンダー追加'),
-                                    ),
-                                  ),
+                                  // SizedBox(
+                                  //   width: 170,
+                                  //   child: ElevatedButton.icon(
+                                  //     onPressed: (){
+                                  //       _calenderAccess();
+                                  //     },
+                                  //     icon: Icon(Icons.calendar_today),
+                                  //     label: Text('カレンダー追加'),
+                                  //   ),
+                                  // ),
                                   SizedBox(
                                     width: 170,
                                     child: ElevatedButton.icon(

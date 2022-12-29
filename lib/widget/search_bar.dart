@@ -163,19 +163,23 @@ class _SearchBarState extends State<SearchBar> {
     return ClipRect(
       child: Stack(
         fit: StackFit.expand,
-        children: [Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.blue[800],
-            title: _searchTextField(),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  Navigator.pop(context);
-                }
-              )
-            ]
+        children: [
+          Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(48.0),
+            child: AppBar(
+              backgroundColor: Colors.blue[800],
+              title: _searchTextField(),
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }
+                )
+              ]
+            ),
           ),
           body: ClipRect(
             child: Stack(

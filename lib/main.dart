@@ -108,23 +108,30 @@ class _InitWidgetState extends State<InitWidget> {
           Scaffold(
             body: _screens[_activeMenuId],
             // ボトムナビゲーション
-            bottomNavigationBar: BottomNavigationBar(
-              onTap: (index) => {
-                // 画面更新
-                setState(() => _activeMenuId = index)
-              },
-              currentIndex: _activeMenuId,
-              selectedItemColor: Colors.blue[800],
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'ホーム',
+            bottomNavigationBar: SizedBox(
+              child: Container(
+                height: 75,
+                child: Wrap(
+                  children: [BottomNavigationBar(
+                    onTap: (index) => {
+                      // 画面更新
+                      setState(() => _activeMenuId = index)
+                    },
+                    currentIndex: _activeMenuId,
+                    selectedItemColor: Colors.blue[800],
+                    items: const [
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.home),
+                        label: 'ホーム',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.favorite),
+                        label: 'お気に入り',
+                      ),
+                    ],
+                  )],
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.favorite),
-                  label: 'お気に入り',
-                ),
-              ],
+              ),
             ),
           ),
           Obx( // getxで検知するように

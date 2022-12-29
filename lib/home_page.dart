@@ -58,55 +58,58 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue[800],
-        title: const Text(
-          "ゲーム発売日",
-          style: TextStyle(
-            color: Colors.white
-          ),
-        ),
-        actions: [
-          IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            // 検索画面へ
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SearchBar()),
-            );
-          })
-        ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(48),
-          child: ColoredBox(
-            color: Colors.white,
-            child: TabBar(
-              controller: _tabController ,
-              tabs: [
-                Tab(
-                  child: Text(
-                    "これから発売",
-                    style: TextStyle(
-                      color: _tabIndex == 0 ? Colors.blue[800] : Colors.grey,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: Text(
-                    "発売済み",
-                    style: TextStyle(
-                      color: _tabIndex == 1 ? Colors.blue[800] : Colors.grey,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-              ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(95.0),
+        child: AppBar(
+          backgroundColor: Colors.blue[800],
+          title: const Text(
+            "ゲーム発売日",
+            style: TextStyle(
+              color: Colors.white
             ),
           ),
+          actions: [
+            IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              // 検索画面へ
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchBar()),
+              );
+            })
+          ],
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(48),
+            child: ColoredBox(
+              color: Colors.white,
+              child: TabBar(
+                controller: _tabController ,
+                tabs: [
+                  Tab(
+                    child: Text(
+                      "これから発売",
+                      style: TextStyle(
+                        color: _tabIndex == 0 ? Colors.blue[800] : Colors.grey,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      "発売済み",
+                      style: TextStyle(
+                        color: _tabIndex == 1 ? Colors.blue[800] : Colors.grey,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
       ),
       drawer: const DrawerWidget(), // サイドバー
       body: TabBarView( // タブによって表示を切り替える

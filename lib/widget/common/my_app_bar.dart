@@ -9,7 +9,8 @@ class MyAppBar extends StatefulWidget with PreferredSizeWidget {
   String title;
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  // Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(45.0);
 
   MyAppBar({
     super.key,

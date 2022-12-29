@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "552735996815",
+    "project_id": "gemuriri",
+    "storage_bucket": "gemuriri.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:552735996815:android:cbb1f96de00953c4b729fa",
+        "android_client_info": {
+          "package_name": "com.example.release"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "552735996815-02rejk8s4qa61tjujetog85kds02l5aj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeEb8ZjZESMwMZBJa7RQ9leJYarR-f3Us"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "552735996815-02rejk8s4qa61tjujetog85kds02l5aj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
