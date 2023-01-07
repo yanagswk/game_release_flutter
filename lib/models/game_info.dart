@@ -12,10 +12,12 @@ class GameInfoModel {
   final int price;
   /// 発売日
   final String salesDate;
-  /// 画像URL
-  final String mainImgUrl;
+  /// 画像URLリスト
+  final List imageList;
   /// 発売元
   final String label;
+  /// 楽天apiから取得した画像url
+  final String largeImageUrl;
   /// 商品説明
   final String itemCaption;
   /// 商品URL
@@ -43,10 +45,11 @@ class GameInfoModel {
     required this.hardware,
     required this.price,
     required this.salesDate,
-    required this.mainImgUrl,
+    required this.imageList,
     required this.label,
     required this.itemCaption,
     required this.itemUrl,
+    required this.largeImageUrl,
     required this.affiliateUrl,
     required this.reviewCount,
     required this.reviewAverage,
@@ -66,10 +69,11 @@ class GameInfoModel {
       hardware: map['hardware'],
       price: map['price'],
       salesDate: map['sales_date'],
-      mainImgUrl: map['main_img'],
+      imageList: map['image_list'],
       label: map['label'],
       itemCaption: map['item_caption'],
       itemUrl: map['item_url'],
+      largeImageUrl: map['large_image_url'],
       affiliateUrl: map['affiliate_url'],
       reviewCount: map['review_count'],
       reviewAverage: map['review_average'].toDouble(),  // int型からdouble型へ変換
@@ -89,10 +93,11 @@ class GameInfoModel {
       hardware: map['hardware'],
       price: map['price'],
       salesDate: map['sales_date'],
-      mainImgUrl: map['main_img'],
+      imageList: map['image_list'],
       label: map['label'],
       itemCaption: map['item_caption'],
       itemUrl: map['item_url'],
+      largeImageUrl: map['large_image_url'],
       affiliateUrl: map['affiliate_url'],
       reviewCount: map['review_count'],
       reviewAverage: map['review_average'].toDouble(),  // int型からdouble型へ変換
@@ -113,10 +118,11 @@ class GameInfoModel {
       hardware: map['hardware'],
       price: map['price'],
       salesDate: map['sales_date'],
-      mainImgUrl: map['main_img'],
+      imageList: map['image_list'],
       label: map['label'],
       itemCaption: map['item_caption'],
       itemUrl: map['item_url'],
+      largeImageUrl: map['large_image_url'],
       affiliateUrl: map['affiliate_url'],
       reviewCount: map['review_count'],
       reviewAverage: map['review_average'].toDouble(),  // int型からdouble型へ変換
@@ -134,8 +140,9 @@ class GameInfoModel {
     'hardware': hardware,
     'price': price,
     'salesDate': salesDate,
-    'mainImgUrl': mainImgUrl,
+    'imageList': imageList,
     'label': label,
+    largeImageUrl: largeImageUrl,
     'itemCaption': itemCaption,
     'itemUrl': itemUrl,
     'affiliateUrl': affiliateUrl,

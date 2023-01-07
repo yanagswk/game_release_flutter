@@ -29,6 +29,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 
 
 class GameDetail extends StatefulWidget {
@@ -605,6 +608,34 @@ class _GameDetailState extends State<GameDetail> {
     print("通知キャンセルしやした 通知id: ${game.notificationId}");
   }
 
+  int activeIndex = 0;
+
+  /// 画像スライドショーのインジケーター
+  Widget buildIndicator() => AnimatedSmoothIndicator(
+    activeIndex: activeIndex,
+    count: game.imageList.length,
+    effect: const JumpingDotEffect(
+      dotHeight: 10,
+      dotWidth: 10,
+      activeDotColor: Colors.blue,
+      dotColor: Colors.black12),
+  );
+
+  /// 画像表示部分
+  Widget buildImage(path, index) => Container(
+    //画像間の隙間
+    margin: EdgeInsets.symmetric(horizontal: 13),
+    color: Colors.white,
+    child: Image.network(
+      game.imageList[index],
+      errorBuilder: (c, o, s) {
+        return const Icon(
+          Icons.downloading,
+          color: Colors.grey,
+        );
+      },
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -659,18 +690,28 @@ class _GameDetailState extends State<GameDetail> {
                             ],
                           ),
                         ),
-                        Container(
-                          width: 200,
-                          height: 200,
-                          child: Image.network(
-                            game.mainImgUrl,
-                            errorBuilder: (c, o, s) {
-                              return const Icon(
-                                Icons.downloading,
-                                color: Colors.grey,
-                              );
-                            },
-                          ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CarouselSlider.builder(
+                              options: CarouselOptions(
+                                height: 350,
+                                initialPage: 0,
+                                viewportFraction: 1,
+                                enlargeCenterPage: true,
+                                onPageChanged: (index, reason) => setState(() {
+                                  activeIndex = index;
+                                }),
+                              ),
+                              itemCount: game.imageList.length,
+                              itemBuilder: (context, index, realIndex) {
+                                final path = game.imageList[index];
+                                return buildImage(path, index);
+                              },
+                            ),
+                            SizedBox(height: 20),
+                            buildIndicator()
+                          ],
                         ),
                         // 値段、評価点
                         Container(
@@ -766,7 +807,7 @@ class _GameDetailState extends State<GameDetail> {
                                     ),
                                     onPressed: () {
                                       // SNS共有
-                                      final share_msg = '${game.salesDate}に「${game.title}」が発売するよ！ \n ${game.affiliateUrl}';
+                                      final share_msg = '${game.title} \n ${game.affiliateUrl}';
                                       Share.share(share_msg);
                                     }
                                   ),
