@@ -41,8 +41,19 @@ class _SearchBarState extends State<SearchBar> {
   FocusNode _focus = new FocusNode();
   bool _isFocus = false;
 
-
+  // 発売した年一覧
   final List<int> _yearList = [2023, 2022, 2021, 2020];
+
+  // ジャンルー一覧
+  final List<String> _genreList = [
+    "シューティング",
+    "格闘・アクション",
+    "アドベンチャー",
+    "シミュレーション",
+    "スポーツ・レース",
+    "RPG",
+    "周辺機器",
+  ];
 
     @override
   void initState() {
@@ -183,7 +194,40 @@ class _SearchBarState extends State<SearchBar> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 30),
+                    Text("ジャンルから探す"),
 
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Wrap(
+                            spacing: 10,
+                            children: _genreList.map((String genre) =>
+                              ActionChip(
+                                label: Text(
+                                  genre,
+                                  style: TextStyle(
+                                    color: Colors.white
+                                  ),
+                                ),
+                                backgroundColor: Colors.grey[500],
+                                onPressed:() {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) => SearchResult(genre: genre),
+                                    ),
+                                  );
+                                }
+                              ),
+                            ).toList(),
+                          )
+                        ],
+                      ),
+                    ),
+
+
+                    
                     // games.length != 0
                     //   ?
                     //   SearchGameInfinityView(

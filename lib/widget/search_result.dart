@@ -17,11 +17,13 @@ class SearchResult extends StatefulWidget {
 
   int? year;
   String? searchWord;
+  String? genre;
 
   SearchResult({
     super.key,
     this.year,
-    this.searchWord
+    this.searchWord,
+    this.genre
   });
 
   @override
@@ -123,6 +125,14 @@ class _SearchResultState extends State<SearchResult> {
       return await ApiClient().getSearchWordGames(
           hardware: _selectHardware,
           searchWord: widget.searchWord!,
+          limit: gameLimit,
+          offset: gameOffset,
+          sort: 'asc'
+      );
+    } else if (widget.genre != null) {
+      return await ApiClient().getGenreGames(
+          hardware: _selectHardware,
+          genre: widget.genre!,
           limit: gameLimit,
           offset: gameOffset,
           sort: 'asc'

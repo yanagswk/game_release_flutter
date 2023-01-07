@@ -160,6 +160,49 @@ class ApiClient {
     };
   }
 
+  /// ゲーム検索
+  Future getGenreGames({
+    required String hardware,
+    required String genre,
+    required int limit,
+    required int offset,
+    String? sort
+  }) async {
+    print("検索api実行");
+    print(
+      'limit: ${limit},offset: ${offset}, hardware: ${hardware}, genre: ${genre}'
+    );
+
+    final params = {
+      'hardware': '$hardware',
+      'genre': '$genre',
+      'limit': '$limit',
+      'offset': '$offset',
+      'device_id' : SharedPrefe.getDeviceId(),
+      'sort': '$sort',
+    };
+
+    final uri = Uri.http(
+      host,
+      '/api/games/info',
+      params
+    );
+    // api実行
+    final response = await http.get(uri);
+    final responseJson = checkStatusCode(response);
+
+    final List gameInfo = responseJson['games'];
+
+    final gameModel = gameInfo.map((e) {
+      return GameInfoModel.fromMap(e);
+    }).toList();
+
+    return {
+      'game_count': responseJson['game_count'],
+      'game': gameModel
+    };
+  }
+
   /// 楽天apiから取得したゲーム情報を取得
   Future<List<GameInfoModel>> getReleasedGameInfo({
     // ゲームタイトル
