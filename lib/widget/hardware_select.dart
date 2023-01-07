@@ -58,7 +58,7 @@ class _HardwareSelectState extends State<HardwareSelect> {
     return Container(
       width: double.infinity,
       color: Colors.white,
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.all(3.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

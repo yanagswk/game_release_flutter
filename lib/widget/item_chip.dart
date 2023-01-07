@@ -1,30 +1,27 @@
 import 'dart:ffi';
 import 'package:flutter/material.dart';
 
-class HardwareChip extends StatefulWidget {
+class ItemChip extends StatefulWidget {
 
   // ハードウェア
   String hardware;
-  
-  HardwareChip({
+  double? width;
+
+  ItemChip({
     super.key,
-    required this.hardware
+    required this.hardware,
+    this.width
   });
 
   @override
-  State<HardwareChip> createState() => _HardwareChipState();
+  State<ItemChip> createState() => _ItemChipState();
 }
 
-class _HardwareChipState extends State<HardwareChip> {
-
-  // ハードウェア
-  late String hardware;
+class _ItemChipState extends State<ItemChip> {
 
     @override
   void initState() {
     super.initState();
-
-    hardware = widget.hardware;
   }
 
   /// ハードウェアによって色を返却
@@ -43,21 +40,21 @@ class _HardwareChipState extends State<HardwareChip> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height:25,
-      width:50,
+      height:30,
+      width: widget.width,
+      padding: const EdgeInsets.only(top: 5, right: 10, bottom: 5, left: 10),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: getHardwareColor(hardware),
+        color: getHardwareColor(widget.hardware),
         borderRadius: BorderRadius.circular(30),
       ),
       child: Text(
-          hardware,
+          widget.hardware,
           style: const TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.bold
+            fontWeight: FontWeight.w500
           ),
         )
-      
     );
   }
 }

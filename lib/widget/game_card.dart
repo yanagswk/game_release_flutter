@@ -6,7 +6,7 @@ import 'package:release/common/device_info.dart';
 import 'package:release/game_detail.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_info.dart';
-import 'package:release/widget/hardware_chip.dart';
+import 'package:release/widget/item_chip.dart';
 import 'package:get/get.dart';
 
 /// ゲームカードwidget
@@ -77,7 +77,7 @@ class _GameCardState extends State<GameCard> {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              HardwareChip(hardware: game.hardware),
+              ItemChip(hardware: game.hardware, width: 70),
               Text('(税込) ${game.price}円'),
               isDisplayDate ? Text(game.salesDate): const SizedBox.shrink(),  // フラグがfalseの時は、何も表示しない
             ]

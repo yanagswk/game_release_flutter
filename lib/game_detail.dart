@@ -11,7 +11,7 @@ import 'package:release/models/notification.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:release/widget/common/system_widget.dart';
-import 'package:release/widget/hardware_chip.dart';
+import 'package:release/widget/item_chip.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/link.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -663,7 +663,13 @@ class _GameDetailState extends State<GameDetail> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    HardwareChip(hardware: game.hardware),
+                                    Row(
+                                      children: [
+                                        ItemChip(hardware: game.hardware),
+                                        const SizedBox(width: 10),
+                                        game.genre != null ? ItemChip(hardware: game.genre!) : const SizedBox()
+                                      ],
+                                    ),
                                     const SizedBox(height: 5),
                                     Container(
                                       margin: const EdgeInsets.only(bottom: 4.0),
@@ -857,7 +863,30 @@ class _GameDetailState extends State<GameDetail> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: SizedBox(
+                            width: 350,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                foregroundColor: Colors.white
+                              ),
+                              onPressed: () {
+                                final url = Uri.parse(game.affiliateUrl);
+                                launchUrl(
+                                  url,
+                                  mode: LaunchMode.externalApplication,   // デフォルトのブラウザで開く(参考: https://zenn.dev/tsuruo/articles/56f3abbb132f90)
+                                );
+                              },
+                              child: Text(
+                                'Rakutenで購入',
+                                style: TextStyle(fontWeight: FontWeight.bold)
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),

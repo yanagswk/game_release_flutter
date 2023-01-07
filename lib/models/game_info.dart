@@ -8,6 +8,8 @@ class GameInfoModel {
   final String title;
   /// ハードウェア
   final String hardware;
+  /// ジャンル
+  final String? genre;
   /// 値段
   final int price;
   /// 発売日
@@ -56,7 +58,8 @@ class GameInfoModel {
     required this.isFavorite,
     required this.isNotification,
     required this.notificationId,
-    this.isDisplay
+    this.isDisplay,
+    this.genre
   });
 
   /// ゲーム一覧用 Map<String, dynamic>からGameInfoModelへ変換する
@@ -67,6 +70,7 @@ class GameInfoModel {
       id: map['id'],
       title: map['title'],
       hardware: map['hardware'],
+      genre: map['genre'],
       price: map['price'],
       salesDate: map['sales_date'],
       imageList: map['image_list'],
@@ -91,6 +95,7 @@ class GameInfoModel {
       id: map['id'],
       title: map['title'],
       hardware: map['hardware'],
+      genre: map['genre'],
       price: map['price'],
       salesDate: map['sales_date'],
       imageList: map['image_list'],
@@ -116,6 +121,7 @@ class GameInfoModel {
       id: map['id'],
       title: map['title'],
       hardware: map['hardware'],
+      genre: map['genre'],
       price: map['price'],
       salesDate: map['sales_date'],
       imageList: map['image_list'],
@@ -138,6 +144,7 @@ class GameInfoModel {
     'id': id,
     'title': title,
     'hardware': hardware,
+    'genre': genre,
     'price': price,
     'salesDate': salesDate,
     'imageList': imageList,
