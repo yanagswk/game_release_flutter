@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:release/common/shared_preferences.dart';
+import 'package:release/models/game_article.dart';
 import 'package:release/models/notice.dart';
 import 'package:http/http.dart' as http;
 
@@ -423,5 +424,47 @@ class ApiClient {
   }
 
 
-}
+    /// ゲーム記事一覧取得
+  Future getGameArticle({
+    required String postType,
+    String? postDate,
+    int? siteId,
+  }) async {
+    print("ゲーム記事取得api実行");
+    final test = siteId ?? '';
 
+    var date = "";
+    if (postType == "target") {
+      date = postDate!;
+    }
+
+    final params = {
+      'device_id' : SharedPrefe.getDeviceId(),
+      'post_type' : "${postType}",
+      'post_date' : "${date}",
+      'site_id'    : "${test}"
+    };
+    final uri = Uri.http(
+      host,
+      '/api/article/index',
+      params
+    );
+    // api実行
+    final response = await http.get(uri);
+    final responseJson = checkStatusCode(response);
+
+    final List gameArticle = responseJson['game_article'];
+
+    final articleModel = gameArticle.map((e) {
+      return GameArticleModel.fromMap(e);
+    }).toList();
+
+    return {
+      'article_count': responseJson['article_count'],
+      'article': articleModel
+    };
+
+
+  }
+
+}
