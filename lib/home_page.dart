@@ -68,17 +68,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               color: Colors.white
             ),
           ),
-          actions: [
-            IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              // 検索画面へ
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SearchBar()),
-              );
-            })
-          ],
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(48),
             child: ColoredBox(

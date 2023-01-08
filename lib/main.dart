@@ -27,6 +27,7 @@ import 'package:release/getx/game_getx.dart';
 import 'package:get/get.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:release/widget/search_bar.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -76,6 +77,8 @@ class _InitWidgetState extends State<InitWidget> {
   final _screens = [
     // ホーム画面
     const HomePage(),
+    // 検索画面
+    const SearchBar(),
     // お気に入り画面
     const GameFavoritePage(),
     // ニュース記事画面
@@ -118,28 +121,35 @@ class _InitWidgetState extends State<InitWidget> {
               child: Container(
                 height: 75,
                 child: Wrap(
-                  children: [BottomNavigationBar(
-                    onTap: (index) => {
-                      // 画面更新
-                      setState(() => _activeMenuId = index)
-                    },
-                    currentIndex: _activeMenuId,
-                    selectedItemColor: Colors.blue[800],
-                    items: const [
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.gamepad),
-                        label: 'ゲーム',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.favorite),
-                        label: 'お気に入り',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.article),
-                        label: 'ニュース',
-                      ),
-                    ],
-                  )],
+                  children: [
+                    BottomNavigationBar(
+                      type: BottomNavigationBarType.fixed,
+                      onTap: (index) => {
+                        // 画面更新
+                        setState(() => _activeMenuId = index)
+                      },
+                      currentIndex: _activeMenuId,
+                      selectedItemColor: Colors.blue[800],
+                      items: const [
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.gamepad),
+                          label: 'ゲーム',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.search),
+                          label: '探す',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.favorite),
+                          label: 'お気に入り',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.article),
+                          label: 'ニュース',
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
             ),
