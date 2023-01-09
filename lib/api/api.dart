@@ -165,18 +165,20 @@ class ApiClient {
   Future getGenreGames({
     required String hardware,
     required String genre,
+    required int isReleased,
     required int limit,
     required int offset,
     String? sort
   }) async {
     print("検索api実行");
     print(
-      'limit: ${limit},offset: ${offset}, hardware: ${hardware}, genre: ${genre}'
+      'limit: ${limit},offset: ${offset}, hardware: ${hardware}, genre: ${genre}, isReleased :${isReleased}'
     );
 
     final params = {
       'hardware': '$hardware',
       'genre': '$genre',
+      'is_released': '$isReleased',
       'limit': '$limit',
       'offset': '$offset',
       'device_id' : SharedPrefe.getDeviceId(),

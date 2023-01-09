@@ -4,6 +4,7 @@ import 'package:release/common/AdModBanner.dart';
 import 'package:release/common/shared_preferences.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_info.dart';
+import 'package:release/widget/common/constants.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:release/widget/game_card.dart';
@@ -15,12 +16,14 @@ import 'package:release/widget/search_select.dart.dart';
 /// AppBar用のクラス
 class SearchResult extends StatefulWidget {
 
+  String displayType;
   int? year;
   String? searchWord;
   String? genre;
 
   SearchResult({
     super.key,
+    required this.displayType,
     this.year,
     this.searchWord,
     this.genre
@@ -53,6 +56,8 @@ class _SearchResultState extends State<SearchResult> {
   String _selectHardware = "All";
   final List<String> _hardwareList = ["All", "Switch", "PS5", "PS4"];
 
+  int _selectReleasedType = 2;
+
   // 入力欄のフォーカス
   FocusNode _focus = new FocusNode();
   bool _isFocus = false;
@@ -63,7 +68,6 @@ class _SearchResultState extends State<SearchResult> {
   void initState() {
     super.initState();
     _gameGetx.setSearchHardware('All');
-
     _focus.addListener(_onFocusChange);
 
     // everでハードウェアの値を監視して、更新されたらapiを叩くために再描画する
@@ -86,12 +90,7 @@ class _SearchResultState extends State<SearchResult> {
     // https://zuma-lab.com/posts/flutter-troubleshooting-called-during-build
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       searchGames(true);
-
-      if (widget.year != null) {
-        _appTitle = '${widget.year}年発売のゲーム';
-      } else if (widget.searchWord != null) {
-        _appTitle = '${widget.searchWord}';
-      }
+      _getAppBarTitle();
     });
   }
 
@@ -107,6 +106,17 @@ class _SearchResultState extends State<SearchResult> {
         _gameGetx.setSearchLoading(false);
       }
     });
+  }
+
+  /// AppBarのタイトル
+  void _getAppBarTitle() {
+    if (widget.displayType == DisplayType.RELEASE_DATE) {
+        _appTitle = '${widget.year}年発売のゲーム';
+      } else if (widget.displayType == DisplayType.SEARCH) {
+        _appTitle = '${widget.searchWord}';
+      } else if (widget.displayType == DisplayType.GENRE) {
+        _appTitle = '${widget.genre}';
+      }
   }
 
 
@@ -133,6 +143,7 @@ class _SearchResultState extends State<SearchResult> {
       return await ApiClient().getGenreGames(
           hardware: _selectHardware,
           genre: widget.genre!,
+          isReleased: _selectReleasedType,
           limit: gameLimit,
           offset: gameOffset,
           sort: 'asc'
@@ -151,6 +162,7 @@ class _SearchResultState extends State<SearchResult> {
         games = [];
         selectMonth;
         _selectHardware;
+        _selectReleasedType;
       });
       gameOffset = 0;
       targetCount = 0;
@@ -213,14 +225,15 @@ class _SearchResultState extends State<SearchResult> {
               children: [
                 Column(
                   children: [
-                    widget.searchWord == null ?
+                    // 発売年を選択した場合
+                    widget.displayType == DisplayType.RELEASE_DATE ?
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children:
                           _yearMonth.map((String month) =>
                             Padding(
-                              padding: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.only(left: 5.0, right: 5.0),
                               child: ChoiceChip(
                                 label: Text(
                                   "${month}月",
@@ -240,11 +253,65 @@ class _SearchResultState extends State<SearchResult> {
                           ).toList(),
                       ),
                     ): const SizedBox(),
+
+                    // ジャンルを選択した場合
+                    widget.displayType == DisplayType.GENRE ?
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
+                          child: ChoiceChip(
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                            // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
+                            visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                            label: const Text(
+                              "これから発売",
+                              style: TextStyle(
+                                color: Colors.white
+                              ),
+                            ),
+                            backgroundColor: Colors.grey[500],
+                            selected: _selectReleasedType == 2,
+                            selectedColor: Colors.black,
+                            onSelected:(value) {
+                              _selectReleasedType = 2;
+                              searchGames(true);
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
+                          child: ChoiceChip(
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                            // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
+                            visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                            label: const Text(
+                              "発売済み",
+                              style: TextStyle(
+                                color: Colors.white
+                              ),
+                            ),
+                            backgroundColor: Colors.grey[500],
+                            selected: _selectReleasedType == 1,
+                            selectedColor: Colors.black,
+                            onSelected:(value) {
+                              _selectReleasedType = 1;
+                              searchGames(true);
+                            },
+                          ),
+                        ),
+                      ],
+                    ): const SizedBox(),
+
+                    // ハードウェア
                     Row(
                       children: _hardwareList.map((String hardware) =>
                           Padding(
-                            padding: const EdgeInsets.all(5.0),
+                            padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
                             child: ChoiceChip(
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                              // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
+                              visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
                               label: Text(
                                 "${getHardWareName(hardware)}",
                                 style: TextStyle(

@@ -4,6 +4,7 @@ import 'package:release/common/AdModBanner.dart';
 import 'package:release/common/shared_preferences.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_info.dart';
+import 'package:release/widget/common/constants.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:release/widget/game_card.dart';
 import 'package:get/get.dart';
@@ -99,6 +100,7 @@ class _SearchBarState extends State<SearchBar> {
     return SizedBox(
       height: 40,
       child: Container(
+        margin: EdgeInsets.only(left: 15.0, right: 15.0),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: Colors.blue),
@@ -122,7 +124,10 @@ class _SearchBarState extends State<SearchBar> {
                 // searchGames(true);
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (BuildContext context) => SearchResult(searchWord: value),
+                    builder: (BuildContext context) => SearchResult(
+                      displayType: DisplayType.SEARCH,
+                      searchWord: value
+                    ),
                   ),
                 );
               },
@@ -148,14 +153,6 @@ class _SearchBarState extends State<SearchBar> {
               backgroundColor: Colors.blue[800],
               title: _searchTextField(),
               centerTitle: true,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }
-                )
-              ]
             ),
           ),
           body: ClipRect(
@@ -184,7 +181,10 @@ class _SearchBarState extends State<SearchBar> {
                                 onPressed:() {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (BuildContext context) => SearchResult(year: year),
+                                      builder: (BuildContext context) => SearchResult(
+                                        displayType: DisplayType.RELEASE_DATE,
+                                        year: year
+                                      ),
                                     ),
                                   );
                                 }
@@ -215,7 +215,10 @@ class _SearchBarState extends State<SearchBar> {
                                 onPressed:() {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (BuildContext context) => SearchResult(genre: genre),
+                                      builder: (BuildContext context) => SearchResult(
+                                        displayType: DisplayType.GENRE,
+                                        genre: genre
+                                      ),
                                     ),
                                   );
                                 }
