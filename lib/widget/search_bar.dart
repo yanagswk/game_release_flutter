@@ -59,41 +59,7 @@ class _SearchBarState extends State<SearchBar> {
     @override
   void initState() {
     super.initState();
-    // _gameGetx.setSearchHardware('All');
-
-    // _focus.addListener(_onFocusChange);
-
-    // // everでハードウェアの値を監視して、更新されたらapiを叩くために再描画する
-    // ever(_gameGetx.searchHardware, (_) => {
-    //   if (mounted) {
-    //     // if (_gameGetx.isInitHardware.value) {
-    //       setState(() {
-    //         searchGames(true);
-    //       }),
-    //     // } else {
-    //       // 初回の空っぽのgameGetx.hardwareから、値がセットされた場合は、
-    //       // 再描画(setState)してほしくないから、フラグを立てる
-    //       // TODO: パワーコードだから修正したい
-    //       // _gameGetx.isInitHardware.value = true
-    //     // }
-    //   }
-    // });
   }
-
-  // void _onFocusChange() {
-  //   print("Focus: " + _focus.hasFocus.toString());
-  //   setState(() {
-  //     _isFocus = _focus.hasFocus;
-
-  //     // 入力欄がフォーカス状態なら、画面を覆う
-  //     if (_isFocus) {
-  //       _gameGetx.setSearchLoading(true);
-  //     } else {
-  //       _gameGetx.setSearchLoading(false);
-  //     }
-  //   });
-  // }
-
 
   // 検索用の入力widget
   Widget _searchTextField() {
@@ -139,133 +105,95 @@ class _SearchBarState extends State<SearchBar> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-      child: Stack(
-        fit: StackFit.expand,
+    return Scaffold(
+    appBar: PreferredSize(
+      preferredSize: Size.fromHeight(48.0),
+      child: AppBar(
+        backgroundColor: Colors.blue[800],
+        title: _searchTextField(),
+        centerTitle: true,
+      ),
+    ),
+    body: Container(
+      decoration: BoxDecoration(color: Colors.grey[200]),
+      child: Column(
         children: [
-          Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(48.0),
-            child: AppBar(
-              backgroundColor: Colors.blue[800],
-              title: _searchTextField(),
-              centerTitle: true,
-            ),
-          ),
-          body: ClipRect(
-            child: Stack(
-              fit: StackFit.expand,
+          Text("発売した年から探す"),
+          // ReleasedYearSelect(),
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  children: [
-                    Text("発売した年から探す"),
-                    // ReleasedYearSelect(),
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Wrap(
-                            spacing: 10,
-                            children: _yearList.map((int year) =>
-                              ActionChip(
-                                label: Text(
-                                  "${year}年",
-                                  style: TextStyle(
-                                    color: Colors.white
-                                  ),
-                                ),
-                                backgroundColor: Colors.grey[500],
-                                onPressed:() {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) => SearchResult(
-                                        displayType: DisplayType.RELEASE_DATE,
-                                        year: year
-                                      ),
-                                    ),
-                                  );
-                                }
-                              ),
-                            ).toList(),
-                          )
-                        ],
+                Wrap(
+                  spacing: 10,
+                  children: _yearList.map((int year) =>
+                    ActionChip(
+                      label: Text(
+                        "${year}年",
+                        style: TextStyle(
+                          color: Colors.white
+                        ),
                       ),
+                      backgroundColor: Colors.grey[500],
+                      onPressed:() {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => SearchResult(
+                              displayType: DisplayType.RELEASE_DATE,
+                              year: year
+                            ),
+                          ),
+                        );
+                      }
                     ),
-                    const SizedBox(height: 30),
-                    Text("ジャンルから探す"),
-
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Wrap(
-                            spacing: 10,
-                            children: _genreList.map((String genre) =>
-                              ActionChip(
-                                label: Text(
-                                  genre,
-                                  style: TextStyle(
-                                    color: Colors.white
-                                  ),
-                                ),
-                                backgroundColor: Colors.grey[500],
-                                onPressed:() {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) => SearchResult(
-                                        displayType: DisplayType.GENRE,
-                                        genre: genre
-                                      ),
-                                    ),
-                                  );
-                                }
-                              ),
-                            ).toList(),
-                          )
-                        ],
-                      ),
-                    ),
-
-
-                    
-                    // games.length != 0
-                    //   ?
-                    //   SearchGameInfinityView(
-                    //     contents: games,
-                    //     getContents: searchGames,
-                    //   )
-                    //   :
-                      // Expanded(child: Text("")),
-                      Expanded(child: Text("")),
-
-                      // バナー広告
-                      AdModBanner(),
-                  ]
-                ),
-                // Obx( // getxで検知するように
-                //   // 入力欄以外を覆う
-                //   () => OverlayLoadingMolecules(
-                //     visible: _gameGetx.isSearchLoading.value,
-                //     isLoading: false
-                //   )
-                // ),
+                  ).toList(),
+                )
               ],
             ),
-          )
-        ),
-        // Obx( // getxで検知するように
-        //   // 全画面ローディング
-        //   () => OverlayLoadingMolecules(
-        //     visible: _gameGetx.isLoading.value,
-        //     isLoading: true
-        //   )
-        // ),
-      ],
+          ),
+          const SizedBox(height: 30),
+          Text("ジャンルから探す"),
+
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  spacing: 10,
+                  children: _genreList.map((String genre) =>
+                    ActionChip(
+                      label: Text(
+                        genre,
+                        style: TextStyle(
+                          color: Colors.white
+                        ),
+                      ),
+                      backgroundColor: Colors.grey[500],
+                      onPressed:() {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => SearchResult(
+                              displayType: DisplayType.GENRE,
+                              genre: genre
+                            ),
+                          ),
+                        );
+                      }
+                    ),
+                  ).toList(),
+                )
+              ],
+            ),
+          ),
+          Expanded(child: Text("")),
+          // バナー広告
+          AdModBanner(),
+        ]
       ),
-    );
+    )
+      );
   }
 }
 

@@ -424,15 +424,18 @@ class _SearchGameInfinityViewState extends State<SearchGameInfinityView> {
   @override
   Widget build(BuildContext context) {
     return  Flexible(  // https://rayt-log.com/%E3%80%90flutter%E3%80%91column%E3%81%AE%E4%B8%AD%E3%81%A7listview-builder%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95/
-      child: ListView.builder(
-        controller: _scrollController,
-        itemCount: widget.contents.length,
-        itemBuilder: (context, gameIndex) {
-          return GameCard(
-            game: widget.contents[gameIndex],
-            isDisplayDate: true,
-          );
-        },
+      child: Container(
+        decoration: BoxDecoration(color: Colors.grey[200]),
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: widget.contents.length,
+          itemBuilder: (context, gameIndex) {
+            return GameCard(
+              game: widget.contents[gameIndex],
+              isDisplayDate: true,
+            );
+          },
+        ),
       ),
     );
   }

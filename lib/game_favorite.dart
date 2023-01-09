@@ -60,6 +60,9 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
     return Scaffold(
       appBar: MyAppBar(title: "お気に入り一覧"),
       body:
+      Container(
+        decoration: BoxDecoration(color: Colors.grey[200]),
+        child:
         favoriteGames.length == 0
         ?
         Column(
@@ -100,6 +103,7 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
             AdModBanner()
           ],
         ),
+      )
     );
   }
 }

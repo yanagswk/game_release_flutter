@@ -101,14 +101,17 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         ),
       ),
       drawer: const DrawerWidget(), // サイドバー
-      body: TabBarView( // タブによって表示を切り替える
-          controller: _tabController,
-          children: [
-            // これから発売
-            GameList(isReleased: 2),
-            // 発売済み
-            GameList(isReleased: 1),
-        ],
+      body: Container(
+        decoration: BoxDecoration(color: Colors.grey[200]),
+        child: TabBarView( // タブによって表示を切り替える
+            controller: _tabController,
+            children: [
+              // これから発売
+              GameList(isReleased: 2),
+              // 発売済み
+              GameList(isReleased: 1),
+          ],
+        ),
       )
     );
   }

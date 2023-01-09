@@ -126,7 +126,6 @@ class _GameArticleState extends State<GameArticle> {
         articles: articles,
         getContents: init,
       ),
-
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.search),
         onPressed: () {
@@ -315,7 +314,7 @@ class _GameArticleState extends State<GameArticle> {
                                               'キャンセル'
                                               ,
                                               style: TextStyle(
-                                                color: Colors.blue
+                                                color: Colors.blue,
                                               ),
                                             ),
                                             style: ElevatedButton.styleFrom(
@@ -423,85 +422,88 @@ class _GameArticleInfinityViewState extends State<GameArticleInfinityView> {
 
   @override
   Widget build(BuildContext context) {
-    return  ListView.builder(
-      controller: _scrollController,
-      itemCount: widget.articles.length,
-      // itemExtent: 150.0,
-      padding: const EdgeInsets.all(8.0),
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            _launchUrl(widget.articles[index].siteUrl);
-          },
-          child: Column(
-            children: [
-              index % 5 == 0 && index != 0
-              ?
-              // バナー広告
-              AdModBanner()
-              :
-              const SizedBox(),
-              Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Image.network(
-                          widget.articles[index].topImageUrl,
-                          errorBuilder: (c, o, s) {
-                            return const Icon(
-                              Icons.downloading,
-                              color: Colors.grey,
-                            );
-                          },
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                getArticleTitle(widget.articles[index].title),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14.0,
-                                ),
-                              ),
-                              const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-                              Text(
-                                widget.articles[index].siteName,
-                                style: const TextStyle(
-                                  fontSize: 10.0,
-                                  color: Colors.black45
-                                ),
-                              ),
-                              const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-                              Text(
-                                widget.articles[index].postDate,
-                                style: const TextStyle(
-                                  fontSize: 10.0,
-                                  color: Colors.black45
-                                ),
-                              ),
-                            ],
+    return  Container(
+      decoration: BoxDecoration(color: Colors.grey[200]),
+      child: ListView.builder(
+        controller: _scrollController,
+        itemCount: widget.articles.length,
+        // itemExtent: 150.0,
+        padding: const EdgeInsets.all(8.0),
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              _launchUrl(widget.articles[index].siteUrl);
+            },
+            child: Column(
+              children: [
+                index % 5 == 0 && index != 0
+                ?
+                // バナー広告
+                AdModBanner()
+                :
+                const SizedBox(),
+                Card(
+                  elevation: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Image.network(
+                            widget.articles[index].topImageUrl,
+                            errorBuilder: (c, o, s) {
+                              return const Icon(
+                                Icons.downloading,
+                                color: Colors.grey,
+                              );
+                            },
                           ),
-                        )
-                      ),
-                    ],
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  getArticleTitle(widget.articles[index].title),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14.0,
+                                  ),
+                                ),
+                                const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
+                                Text(
+                                  widget.articles[index].siteName,
+                                  style: const TextStyle(
+                                    fontSize: 10.0,
+                                    color: Colors.black45
+                                  ),
+                                ),
+                                const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
+                                Text(
+                                  widget.articles[index].postDate,
+                                  style: const TextStyle(
+                                    fontSize: 10.0,
+                                    color: Colors.black45
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
