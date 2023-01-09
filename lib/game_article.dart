@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/instance_manager.dart';
 import 'package:release/api/api.dart';
 import 'package:release/common/AdModBanner.dart';
+import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_article.dart';
 import 'package:release/widget/common/my_app_bar.dart';
+import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
@@ -38,6 +42,9 @@ class _GameArticleState extends State<GameArticle> {
   String targetMonth = "";
   String targetDay = "";
 
+  // Getx読み込み
+  final _gameGetx = Get.put(GameGetx());
+
 
   String getSiteAppTitle() {
     if (_site == 1) {
@@ -57,6 +64,8 @@ class _GameArticleState extends State<GameArticle> {
   }
 
   Future init() async {
+    _gameGetx.setLoading(true);
+
     articles = [];
     final articleModel = await ApiClient().getGameArticle(
       postType: _postType,
@@ -69,6 +78,8 @@ class _GameArticleState extends State<GameArticle> {
       articles;
       _appTitle = "${getSiteAppTitle()} ${getPostDateAppTitle()}";
     });
+
+    _gameGetx.setLoading(false);
   }
 
   /// 30文字以上の場合は、省略する
@@ -97,7 +108,10 @@ class _GameArticleState extends State<GameArticle> {
     targetMonth = now.month.toString();
     targetDay = now.day.toString();
     _post = "${targetYear}/${targetMonth}/${targetDay}";
-    init();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      init();
+    });
   }
 
   @override
@@ -327,7 +341,7 @@ class _GameArticleState extends State<GameArticle> {
                                                     value: "target",
                                                   ),
                                                 ),
-
+      
                                                 TextButton(
                                                   child: const Text(
                                                     '日付選択',
@@ -363,12 +377,32 @@ class _GameArticleState extends State<GameArticle> {
                                         ],
                                       ),
                                       const SizedBox(height: 50),
-                                      ElevatedButton(
-                                        onPressed: (){
-                                          Navigator.of(context).pop();
-                                          init();
-                                        },
-                                        child: Text('この条件で検索する'),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: (){
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text(
+                                              'キャンセル'
+                                              ,
+                                              style: TextStyle(
+                                                color: Colors.blue
+                                              ),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.white,
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: (){
+                                              Navigator.of(context).pop();
+                                              init();
+                                            },
+                                            child: Text('この条件で検索する'),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -384,6 +418,6 @@ class _GameArticleState extends State<GameArticle> {
             });
         },
       ),
-    );
+      );
   }
 }
