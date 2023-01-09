@@ -3,6 +3,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:release/api/api.dart';
 import 'package:release/common/AdModBanner.dart';
+import 'package:release/common/shared_preferences.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_article.dart';
 import 'package:release/widget/common/my_app_bar.dart';
@@ -19,12 +20,15 @@ class GameArticle extends StatefulWidget {
 }
 
 class _GameArticleState extends State<GameArticle> {
-
   // 記事一覧
   List<GameArticleModel> articles = [];
 
   // 記事数
   int articleCount = 0;
+  // 取得するゲーム数
+  int articleLimit = 50;
+  // 取得するゲームの開始位置
+  int articleOffset = 0;
 
   // サイト
   int? _site = null;
@@ -63,17 +67,35 @@ class _GameArticleState extends State<GameArticle> {
     return "";
   }
 
-  Future init() async {
+  Future init(bool isReset) async {
+    if (isReset) {
+      setState(() {
+        articles = [];
+      });
+      articleOffset = 0;
+      articleCount = 0;
+      SharedPrefe.setIsPaging(true);
+    }
+
+    // 総数よりも大きくなったらreturnする
+    if (articleCount != 0 && articleCount < articleOffset) {
+      SharedPrefe.setIsPaging(false);
+      return ;
+    }
+
     _gameGetx.setLoading(true);
 
-    articles = [];
     final articleModel = await ApiClient().getGameArticle(
       postType: _postType,
       postDate: _post,
-      siteId: _site
+      siteId: _site,
+      limit: articleLimit,
+      offset: articleOffset,
     );
     articleCount = articleModel["article_count"];
-    articles = articleModel["article"];
+    articles.addAll(articleModel["article"]);
+    articleOffset += articleLimit;
+
     setState(() {
       articles;
       _appTitle = "${getSiteAppTitle()} ${getPostDateAppTitle()}";
@@ -81,24 +103,6 @@ class _GameArticleState extends State<GameArticle> {
 
     _gameGetx.setLoading(false);
   }
-
-  /// 30文字以上の場合は、省略する
-  String getArticleTitle(String title) {
-    if (title.length >= 35) {
-      title = "${title.substring(0, 35)}...";
-    }
-    return title;
-  }
-
-  /// 外部サイトへ遷移する
-  Future _launchUrl(Uri url) async {
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      throw 'Unable to launch url $url';
-    }
-  }
-
 
   @override
   void initState() {
@@ -110,7 +114,7 @@ class _GameArticleState extends State<GameArticle> {
     _post = "${targetYear}/${targetMonth}/${targetDay}";
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      init();
+      init(true);
     });
   }
 
@@ -118,87 +122,11 @@ class _GameArticleState extends State<GameArticle> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(title: _appTitle),
-      body: ListView.builder(
-        // shrinkWrap: true, // ListView.builderをネストする時に指定 https://www.choge-blog.com/programming/flutterlistview-nest/
-        // physics: const NeverScrollableScrollPhysics(), // ListView.builderをネストする時に指定
-        itemCount: articles.length,
-        // itemExtent: 150.0,
-        padding: const EdgeInsets.all(8.0),
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              _launchUrl(articles[index].siteUrl);
-            },
-            child: Column(
-              children: [
-                index % 5 == 0 && index != 0
-                ?
-                // バナー広告
-                AdModBanner()
-                :
-                const SizedBox(),
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Image.network(
-                            articles[index].topImageUrl,
-                            errorBuilder: (c, o, s) {
-                              return const Icon(
-                                Icons.downloading,
-                                color: Colors.grey,
-                              );
-                            },
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  getArticleTitle(articles[index].title),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14.0,
-                                  ),
-                                ),
-                                const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-                                Text(
-                                  articles[index].siteName,
-                                  style: const TextStyle(
-                                    fontSize: 10.0,
-                                    color: Colors.black45
-                                  ),
-                                ),
-                                const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-                                Text(
-                                  articles[index].postDate,
-                                  style: const TextStyle(
-                                    fontSize: 10.0,
-                                    color: Colors.black45
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+      body: GameArticleInfinityView(
+        articles: articles,
+        getContents: init,
       ),
+
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.search),
         onPressed: () {
@@ -341,7 +269,6 @@ class _GameArticleState extends State<GameArticle> {
                                                     value: "target",
                                                   ),
                                                 ),
-      
                                                 TextButton(
                                                   child: const Text(
                                                     '日付選択',
@@ -398,7 +325,7 @@ class _GameArticleState extends State<GameArticle> {
                                           ElevatedButton(
                                             onPressed: (){
                                               Navigator.of(context).pop();
-                                              init();
+                                              init(true);
                                             },
                                             child: Text('この条件で検索する'),
                                           ),
@@ -417,7 +344,164 @@ class _GameArticleState extends State<GameArticle> {
               );
             });
         },
-      ),
-      );
+      )
+    );
+  }
+}
+
+
+
+// ----インフィニティスクロール-------------
+class GameArticleInfinityView extends StatefulWidget {
+  // 記事一覧
+  final List<GameArticleModel> articles;
+  // ゲームを取得する関数
+  final Future<dynamic> Function(bool) getContents;
+
+  const GameArticleInfinityView({
+    Key? key,
+    required this.articles,
+    required this.getContents,
+  }) : super(key: key);
+
+  @override
+  State<GameArticleInfinityView> createState() => _GameArticleInfinityViewState();
+}
+
+class _GameArticleInfinityViewState extends State<GameArticleInfinityView> {
+  late ScrollController _scrollController;
+  bool _isLoading = false;
+
+  bool isPaging = true;
+
+  /// 30文字以上の場合は、省略する
+  String getArticleTitle(String title) {
+    if (title.length >= 35) {
+      title = "${title.substring(0, 35)}...";
+    }
+    return title;
+  }
+
+    /// 外部サイトへ遷移する
+  Future _launchUrl(Uri url) async {
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Unable to launch url $url';
+    }
+  }
+
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(() async {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent * 0.95 &&
+          !_isLoading) {
+
+        isPaging = SharedPrefe.getIsPaging();
+        if (!isPaging) {
+          setState (() {});
+          return;
+        }
+
+        _isLoading = true;
+        await widget.getContents(false);
+        setState (() {
+          _isLoading = false;
+        });
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  ListView.builder(
+      controller: _scrollController,
+      itemCount: widget.articles.length,
+      // itemExtent: 150.0,
+      padding: const EdgeInsets.all(8.0),
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            _launchUrl(widget.articles[index].siteUrl);
+          },
+          child: Column(
+            children: [
+              index % 5 == 0 && index != 0
+              ?
+              // バナー広告
+              AdModBanner()
+              :
+              const SizedBox(),
+              Card(
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Image.network(
+                          widget.articles[index].topImageUrl,
+                          errorBuilder: (c, o, s) {
+                            return const Icon(
+                              Icons.downloading,
+                              color: Colors.grey,
+                            );
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                getArticleTitle(widget.articles[index].title),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.0,
+                                ),
+                              ),
+                              const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
+                              Text(
+                                widget.articles[index].siteName,
+                                style: const TextStyle(
+                                  fontSize: 10.0,
+                                  color: Colors.black45
+                                ),
+                              ),
+                              const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
+                              Text(
+                                widget.articles[index].postDate,
+                                style: const TextStyle(
+                                  fontSize: 10.0,
+                                  color: Colors.black45
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

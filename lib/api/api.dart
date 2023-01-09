@@ -429,6 +429,8 @@ class ApiClient {
     /// ゲーム記事一覧取得
   Future getGameArticle({
     required String postType,
+    required int offset,
+    required int limit,
     String? postDate,
     int? siteId,
   }) async {
@@ -440,9 +442,15 @@ class ApiClient {
       date = postDate!;
     }
 
+    print(
+      'limit: ${limit},offset: ${offset}, postType: ${postType}, date :${date}, test: ${test}'
+    );
+
     final params = {
       'device_id' : SharedPrefe.getDeviceId(),
       'post_type' : "${postType}",
+      'offset' : "${offset}",
+      'limit' : "${limit}",
       'post_date' : "${date}",
       'site_id'    : "${test}"
     };
