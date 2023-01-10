@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(95.0),
         child: AppBar(
-          backgroundColor: Colors.blue[800],
+          backgroundColor: Colors.blue[900],
           title: const Text(
             "ゲーム発売日",
             style: TextStyle(
@@ -73,13 +73,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             child: ColoredBox(
               color: Colors.white,
               child: TabBar(
-                controller: _tabController ,
+                controller: _tabController,
                 tabs: [
                   Tab(
                     child: Text(
                       "これから発売",
                       style: TextStyle(
-                        color: _tabIndex == 0 ? Colors.blue[800] : Colors.grey,
+                        color: _tabIndex == 0 ? Colors.blue[900] : Colors.grey,
                         fontWeight: FontWeight.bold
                       ),
                     ),
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     child: Text(
                       "発売済み",
                       style: TextStyle(
-                        color: _tabIndex == 1 ? Colors.blue[800] : Colors.grey,
+                        color: _tabIndex == 1 ? Colors.blue[900] : Colors.grey,
                         fontWeight: FontWeight.bold
                       ),
                     ),

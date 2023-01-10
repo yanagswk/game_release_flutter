@@ -119,7 +119,7 @@ class _InitWidgetState extends State<InitWidget> {
             // ボトムナビゲーション
             bottomNavigationBar: SizedBox(
               child: Container(
-                height: 75,
+                height: 60,
                 child: Wrap(
                   children: [
                     BottomNavigationBar(

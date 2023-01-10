@@ -36,6 +36,14 @@ class _GameCardState extends State<GameCard> {
     // Getx読み込み
   final gameGetx = Get.put(GameGetx());
 
+  /// ゲームタイトルの文字制限
+  String getGameTitle() {
+    if (game.title.length >= 50) {
+      return "${game.title.substring(0, 50)}...";
+    }
+    return game.title;
+  }
+
     @override
   void initState() {
     super.initState();
@@ -68,7 +76,7 @@ class _GameCardState extends State<GameCard> {
             ),
           ),
           title: Text(
-            game.title,
+            getGameTitle(),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold

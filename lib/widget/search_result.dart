@@ -233,8 +233,11 @@ class _SearchResultState extends State<SearchResult> {
                         children:
                           _yearMonth.map((String month) =>
                             Padding(
-                              padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                              padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
                               child: ChoiceChip(
+                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                                // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
+                                visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
                                 label: Text(
                                   "${month}月",
                                   style: TextStyle(

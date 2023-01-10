@@ -34,7 +34,7 @@ class _GameArticleState extends State<GameArticle> {
   int? _site = null;
 
   // appBarタイトル
-  String _appTitle = "ニュース記事";
+  String _appTitle = "ゲームニュース記事";
 
   // 投稿タイプ new or target
   String _postType = "new";
@@ -46,6 +46,8 @@ class _GameArticleState extends State<GameArticle> {
   String targetMonth = "";
   String targetDay = "";
 
+  final nowDate = DateTime.now();
+
   // Getx読み込み
   final _gameGetx = Get.put(GameGetx());
 
@@ -56,7 +58,7 @@ class _GameArticleState extends State<GameArticle> {
     } else if (_site == 2) {
       return "ファミ通";
     } else {
-      return "ニュース記事";
+      return "ゲームニュース記事";
     }
   }
 
@@ -128,6 +130,7 @@ class _GameArticleState extends State<GameArticle> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.search),
+        backgroundColor: Colors.blue[800],
         onPressed: () {
           showModalBottomSheet(
             //モーダルの背景の色、透過
@@ -151,14 +154,17 @@ class _GameArticleState extends State<GameArticle> {
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(4.0),
+                      padding: const EdgeInsets.only(top: 10, bottom: 0, left: 20, right: 0),
                       child: Column(
                         children: [
                           const SizedBox(height: 10),
                           Row(
                             children: [
                               Icon(Icons.article_outlined),
-                              Text('サイト'),
+                              Text(
+                                'サイト',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ],
                           ),
                           Expanded(
@@ -175,15 +181,13 @@ class _GameArticleState extends State<GameArticle> {
                                             child: ListTile(
                                               title : Text('全サイト'),
                                               leading: Radio(
-                                                // （2） 選択グループ
+                                                activeColor: Colors.blue[900],
                                                 groupValue: _site,
-                                                // （3） 値が変わったとき
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _site = value;
                                                   });
                                                 },
-                                                // （4） 選択されたときの値
                                                 value: null,
                                               ),
                                             ),
@@ -192,15 +196,13 @@ class _GameArticleState extends State<GameArticle> {
                                             child: ListTile(
                                               title : Text('4gamer'),
                                               leading: Radio(
-                                                // （2） 選択グループ
+                                                activeColor: Colors.blue[900],
                                                 groupValue: _site,
-                                                // （3） 値が変わったとき
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _site = value!;
                                                   });
                                                 },
-                                                // （4） 選択されたときの値
                                                 value: 1,
                                               ),
                                             ),
@@ -213,15 +215,13 @@ class _GameArticleState extends State<GameArticle> {
                                             child: ListTile(
                                               title : Text('ファミ通'),
                                               leading: Radio(
-                                                // （2） 選択グループ
+                                                activeColor: Colors.blue[900],
                                                 groupValue: _site,
-                                                // （3） 値が変わったとき
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _site = value!;
                                                   });
                                                 },
-                                                // （4） 選択されたときの値
                                                 value: 2,
                                               ),
                                             ),
@@ -231,7 +231,10 @@ class _GameArticleState extends State<GameArticle> {
                                       Row(
                                         children: [
                                           Icon(Icons.article_outlined),
-                                          Text('投稿日'),
+                                          Text(
+                                            '投稿日',
+                                            style: TextStyle(fontWeight: FontWeight.bold),
+                                          ),
                                         ],
                                       ),
                                       Row(
@@ -241,13 +244,13 @@ class _GameArticleState extends State<GameArticle> {
                                             child: ListTile(
                                               title : Text('新着順'),
                                               leading: Radio(
+                                                activeColor: Colors.blue[900],
                                                 groupValue: _postType,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _postType = value!;
                                                   });
                                                 },
-                                                // （4） 選択されたときの値
                                                 value: "new",
                                               ),
                                             ),
@@ -258,17 +261,22 @@ class _GameArticleState extends State<GameArticle> {
                                                 ListTile(
                                                   title : Text('指定する'),
                                                   leading: Radio(
+                                                    activeColor: Colors.blue[900],
                                                     groupValue: _postType,
                                                     onChanged: (value) {
                                                       setState(() {
                                                         _postType = value!;
                                                       });
                                                     },
-                                                    // （4） 選択されたときの値
                                                     value: "target",
                                                   ),
                                                 ),
                                                 TextButton(
+                                                  style: ButtonStyle(
+                                                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                                    minimumSize: MaterialStateProperty.all(Size.zero),
+                                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                  ),
                                                   child: const Text(
                                                     '日付選択',
                                                     style: TextStyle(color: Colors.blue),
@@ -277,7 +285,11 @@ class _GameArticleState extends State<GameArticle> {
                                                     DatePicker.showDatePicker(context,
                                                       showTitleActions: true,
                                                       minTime: DateTime(2022, 12, 1),
-                                                      maxTime: DateTime(2023, 12, 31),
+                                                      maxTime: DateTime(
+                                                        int.parse(nowDate.year.toString()),
+                                                        int.parse(nowDate.month.toString()),
+                                                        int.parse(nowDate.day.toString()),
+                                                      ),
                                                       onChanged: (date) {
                                                         // ドラムスクロールで日付を変更した場合に検知。完了ボタンを押してなくても検知する。
                                                         print('change $date');
@@ -302,31 +314,21 @@ class _GameArticleState extends State<GameArticle> {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 50),
+                                      const SizedBox(height: 10),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
                                           ElevatedButton(
-                                            onPressed: (){
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text(
-                                              'キャンセル'
-                                              ,
-                                              style: TextStyle(
-                                                color: Colors.blue,
-                                              ),
-                                            ),
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.white,
+                                              backgroundColor: Colors.blue[800], //ボタンの背景色
                                             ),
-                                          ),
-                                          ElevatedButton(
                                             onPressed: (){
                                               Navigator.of(context).pop();
                                               init(true);
                                             },
-                                            child: Text('この条件で検索する'),
+                                            child: Text(
+                                              'この条件で検索する',
+                                            ),
                                           ),
                                         ],
                                       ),

@@ -111,7 +111,7 @@ class _SearchBarState extends State<SearchBar> {
     appBar: PreferredSize(
       preferredSize: Size.fromHeight(48.0),
       child: AppBar(
-        backgroundColor: Colors.blue[800],
+        backgroundColor: Colors.blue[900],
         title: _searchTextField(),
         centerTitle: true,
       ),

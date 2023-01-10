@@ -66,75 +66,86 @@ class _HardwareSelectState extends State<HardwareSelect> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Wrap(
-                  spacing: 10,
-                  children: [
-                    // TODO: ListView.Builder使う
-                    ChoiceChip(
-                      label: const Text(
-                        "全機種",
-                        style: TextStyle(
-                          color: Colors.white
+                Padding(
+                  padding: const EdgeInsets.only(top: 3.0, bottom: 3.0),
+                  child: Wrap(
+                    spacing: 10,
+                    children: [
+                      // TODO: ListView.Builder使う
+                      ChoiceChip(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                        visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                        label: const Text(
+                          "全機種",
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
                         ),
+                        selected: _hardware == 'All',
+                        backgroundColor: Colors.grey[500],
+                        selectedColor: Colors.black,
+                        onSelected: (_) {
+                          setState(() {
+                            setHardWare('All');
+                          });
+                        },
                       ),
-                      selected: _hardware == 'All',
-                      backgroundColor: Colors.grey[500],
-                      selectedColor: Colors.black,
-                      onSelected: (_) {
-                        setState(() {
-                          setHardWare('All');
-                        });
-                      },
-                    ),
-                    ChoiceChip(
-                      label: const Text(
-                        "Switch",
-                        style: TextStyle(
-                          color: Colors.white
+                      ChoiceChip(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                        visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                        label: const Text(
+                          "Switch",
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
                         ),
+                        selected: _hardware == "Switch",
+                        backgroundColor: Colors.grey[500],
+                        selectedColor: Colors.red,
+                        onSelected: (_) {
+                          setState(() {
+                            setHardWare('Switch');
+                          });
+                        },
                       ),
-                      selected: _hardware == "Switch",
-                      backgroundColor: Colors.grey[500],
-                      selectedColor: Colors.red,
-                      onSelected: (_) {
-                        setState(() {
-                          setHardWare('Switch');
-                        });
-                      },
-                    ),
-                    ChoiceChip(
-                      label: const Text(
-                        "PS5",
-                        style: TextStyle(
-                          color: Colors.white
+                      ChoiceChip(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                        visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                        label: const Text(
+                          "PS5",
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
                         ),
+                        selected: _hardware == "PS5",
+                        backgroundColor: Colors.grey[500],
+                        selectedColor: Colors.blue,
+                        onSelected: (_) {
+                          setState(() {
+                            setHardWare('PS5');
+                          });
+                        },
                       ),
-                      selected: _hardware == "PS5",
-                      backgroundColor: Colors.grey[500],
-                      selectedColor: Colors.blue,
-                      onSelected: (_) {
-                        setState(() {
-                          setHardWare('PS5');
-                        });
-                      },
-                    ),
-                    ChoiceChip(
-                      label: const Text(
-                        "PS4",
-                        style: TextStyle(
-                          color: Colors.white
+                      ChoiceChip(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                        visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                        label: const Text(
+                          "PS4",
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
                         ),
+                        selected: _hardware == 'PS4',
+                        backgroundColor: Colors.grey[500],
+                        selectedColor: Colors.cyan,
+                        onSelected: (_) {
+                          setState(() {
+                            setHardWare('PS4');
+                          });
+                        },
                       ),
-                      selected: _hardware == 'PS4',
-                      backgroundColor: Colors.grey[500],
-                      selectedColor: Colors.cyan,
-                      onSelected: (_) {
-                        setState(() {
-                          setHardWare('PS4');
-                        });
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 )
               ],
             ),
