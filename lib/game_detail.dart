@@ -762,6 +762,7 @@ class _GameDetailState extends State<GameDetail> {
                                 ],
                               ),
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   IconButton( // お気に入りアイコン
                                     icon: SizedBox(

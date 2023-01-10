@@ -5,6 +5,7 @@ import 'package:release/api/api.dart';
 import 'package:release/common/AdModBanner.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_info.dart';
+import 'package:release/widget/common/drawer_widget.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/game_card.dart';
 import 'package:get/get.dart';
@@ -59,6 +60,7 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(title: "お気に入り一覧"),
+      drawer: const DrawerWidget(), // サイドバー
       body:
       Container(
         decoration: BoxDecoration(color: Colors.grey[200]),

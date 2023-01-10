@@ -5,6 +5,7 @@ import 'package:release/common/shared_preferences.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_info.dart';
 import 'package:release/widget/common/constants.dart';
+import 'package:release/widget/common/drawer_widget.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:release/widget/game_card.dart';
 import 'package:get/get.dart';
@@ -66,7 +67,7 @@ class _SearchBarState extends State<SearchBar> {
     return SizedBox(
       height: 40,
       child: Container(
-        margin: EdgeInsets.only(left: 15.0, right: 15.0),
+        margin: EdgeInsets.only(left: 5.0, right: 20.0),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: Colors.blue),
@@ -77,7 +78,7 @@ class _SearchBarState extends State<SearchBar> {
             width: 340,
             margin: const EdgeInsets.symmetric(vertical: 10.0),
             child: TextField(
-              autofocus: true, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
+              autofocus: false, //TextFieldが表示されるときにフォーカスする（キーボードを表示する）
               decoration: const InputDecoration(
                 hintText: 'ゲームを検索',
                 contentPadding: EdgeInsets.only(left: 8.0),
@@ -87,7 +88,6 @@ class _SearchBarState extends State<SearchBar> {
               ),
               onSubmitted: (value) {
                 _searchWord = value;
-                // searchGames(true);
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) => SearchResult(
@@ -116,6 +116,7 @@ class _SearchBarState extends State<SearchBar> {
         centerTitle: true,
       ),
     ),
+    drawer: const DrawerWidget(), // サイドバー
     body: Container(
       decoration: BoxDecoration(color: Colors.grey[200]),
       child: Column(

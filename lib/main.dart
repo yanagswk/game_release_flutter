@@ -49,7 +49,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class InitWidget extends StatefulWidget {
   const InitWidget({
     super.key,

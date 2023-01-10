@@ -6,6 +6,7 @@ import 'package:release/common/AdModBanner.dart';
 import 'package:release/common/shared_preferences.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_article.dart';
+import 'package:release/widget/common/drawer_widget.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -124,6 +125,7 @@ class _GameArticleState extends State<GameArticle> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(title: _appTitle),
+      drawer: const DrawerWidget(), // サイドバー
       body: GameArticleInfinityView(
         articles: articles,
         getContents: init,

@@ -347,12 +347,18 @@ class ApiClient {
   }
 
     /// お問い合せ送信
-  Future sendContactForm(String message) async {
+  Future sendContactForm(
+    String nickname,
+    String email,
+    String message,
+  ) async {
     final uri = Uri.http(
       host,
       '/api/contact/message',
       {
         'device_id' : SharedPrefe.getDeviceId(),
+        'nickname'  : '$nickname',
+        'email'     : '$email',
         'message'   : '$message',
       }
     );

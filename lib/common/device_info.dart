@@ -6,6 +6,7 @@ import 'package:release/api/api.dart';
 import 'package:release/common/shared_preferences.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 
 // final deviceIdProvider = StateProvider((ref) => '');
@@ -39,6 +40,12 @@ class DeviceInfo {
     // iOSのとき
       final iosDeviceInfo = await deviceInfo.iosInfo;
       deviceId = iosDeviceInfo.identifierForVendor;
+
+      final packageInfo = await PackageInfo.fromPlatform();
+      // print(packageInfo.appName);
+      // print(packageInfo.version);
+      // print(packageInfo.buildNumber);
+      _gameGetx.appVersion = packageInfo.version;
     }
 
     var result = await ApiClient().registerDeviceInfo(deviceId);

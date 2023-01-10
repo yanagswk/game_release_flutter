@@ -1,6 +1,8 @@
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
+import 'package:release/getx/game_getx.dart';
 import 'package:release/notice_page.dart';
 import 'package:release/question_page.dart';
 import 'package:launch_review/launch_review.dart';
@@ -17,6 +19,9 @@ class DrawerWidget extends StatefulWidget {
 class _DrawerWidgetState extends State<DrawerWidget> {
   var _city = '';
 
+  // Getx読み込み
+  final _gameGetx = Get.put(GameGetx());
+
   // プライバシーポリシー遷移
   Future _launchUrl() async {
     var url = "https://massu-engineer.com/privacy_policy_game_release/";
@@ -30,68 +35,65 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-          child: ListView(
-            children: [
-              const DrawerHeader(
-                child: Text(
-                  'ゲーム発売日管理',
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.white,
-                  ),
-                ),
-                // child: Image.asset(
-                //   'assets/game_release_icon.jpg'
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              children: [
+                // ListTile(
+                //   title: Text('お知らせ'),
+                //   onTap: () {
+                //     // Navigator.pop(context);
+                //     Navigator.of(context).push(
+                //       MaterialPageRoute(
+                //         builder: (BuildContext context) => const NoticePage(),
+                //       ),
+                //     );
+                //   },
                 // ),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
+                ListTile(
+                  leading: const Icon(Icons.chat_bubble_outline),
+                  title: Text('お問い合わせ'),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const QuestionPage(),
+                      ),
+                    );
+                  },
                 ),
-              ),
-              // ListTile(
-              //   title: Text('お知らせ'),
-              //   onTap: () {
-              //     // Navigator.pop(context);
-              //     Navigator.of(context).push(
-              //       MaterialPageRoute(
-              //         builder: (BuildContext context) => const NoticePage(),
-              //       ),
-              //     );
-              //   },
-              // ),
-              ListTile(
-                title: Text('お問い合わせ'),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => const QuestionPage(),
-                    ),
-                  );
-                },
-              ),
-              // ListTile(
-              //   title: Text('このアプリをレビューする'),
-              //   onTap: () {
-              //     // TODO: アプリできてから？？
-              //     LaunchReview.launch();
-              //   },
-              // ),
-              // ListTile(
-              //   title: Text('シェアする'),
-              //   onTap: () {
-              //     // Navigator.pop(context);
-              //     Share.share('このアプリをシェアしたいんだお');
-              //   },
-              // ),
-              ListTile(
-                title: Text('プライバシーポリシー'),
-                onTap: () {
-                  // setState(() => _city = 'Dallas, TX');
-                  // Navigator.pop(context);
-                  _launchUrl();
-                },
-              ),
-            ],
+                // ListTile(
+                //   title: Text('このアプリをレビューする'),
+                //   onTap: () {
+                //     // TODO: アプリできてから？？
+                //     LaunchReview.launch();
+                //   },
+                // ),
+                // ListTile(
+                //   title: Text('シェアする'),
+                //   onTap: () {
+                //     // Navigator.pop(context);
+                //     Share.share('このアプリをシェアしたいんだお');
+                //   },
+                // ),
+                ListTile(
+                  leading: const Icon(Icons.policy_outlined),
+                  title: Text('プライバシーポリシー'),
+                  onTap: () {
+                    _launchUrl();
+                  },
+                ),
+                // Container(
+                //   alignment: Alignment.bottomCenter,
+                //   child: Text("バージョン: ${_gameGetx.appVersion}")
+                // )
+              ],
+            ),
           ),
-        );
+          Text("バージョン: ${_gameGetx.appVersion}"),
+          const SizedBox(height: 20)
+        ],
+      ),
+    );
   }
 }

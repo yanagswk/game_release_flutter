@@ -24,6 +24,9 @@ class GameGetx extends GetxController {
   // デバイスチェックフラグ
   RxBool isDeviceCheck = false.obs;
 
+  // アプリバージョン
+  String appVersion = "";
+
 
 
   /// ハードウェア更新
