@@ -125,14 +125,16 @@ class LocalNotification {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
       number,
       "ゲーム発売日になりました",
-      "「${title}」が発売しました",
+      "「${title}」の発売日になりました",
       tz.TZDateTime.from(
         DateTime(
           int.parse(dateList[0]),
           int.parse(dateList[1]),
           int.parse(dateList[2]),
-          0,
-          0
+          int.parse(dateList[3]),
+          int.parse(dateList[4]),
+          // 0,
+          // 0
         ),
         // DateTime(2022,12,29,14,49),
         tz.local

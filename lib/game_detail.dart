@@ -89,6 +89,10 @@ class _GameDetailState extends State<GameDetail> {
   // 発売日が現在から見て将来の日付か
   bool isFuture = false;
 
+  // 通知時間(テスト)
+  String _testPush = "";
+  List<String> testDateSplit = [];
+
   @override
   void initState() {
     super.initState();
@@ -546,12 +550,14 @@ class _GameDetailState extends State<GameDetail> {
   // 通知設定
   Future _setNotification() async {
     // 通知登録api叩く
-    notification = await ApiClient().notificationRegister(game.id);
+    // notification = await ApiClient().notificationRegister(game.id);
+    notification = await ApiClient().notificationRegister(10000);
 
     LocalNotification().requestIOSPermission();
     LocalNotification().initializePlatformSpecifics();
     LocalNotification().scheduleNotification(
-      salesDateSplit,
+      // salesDateSplit,
+      testDateSplit,
       game.title,
       notification.notificationId
     );
@@ -842,6 +848,41 @@ class _GameDetailState extends State<GameDetail> {
                                   ),
                                 ),
                               ),
+
+
+                              // テスト通知
+                              TextButton(
+                                onPressed: () {
+                                    DatePicker.showDateTimePicker(context,
+                                    showTitleActions: true,
+                                    // showSecondsColumn: false, // 「秒」を表示するか 初期値true
+                                    onConfirm: (date) {
+                                      // 時間を変更して完了ボタンを押したら検知
+                                      setState(() {
+                                        testDateSplit = [
+                                          date.year.toString(),
+                                          date.month.toString(),
+                                          date.day.toString(),
+                                          date.hour.toString(),
+                                          date.minute.toString(),
+                                        ];
+                                        _testPush = "${date.year.toString()}/${date.month.toString()}/${date.day.toString()} ${date.hour.toString()}:${date.minute.toString()}";
+                                        _settingLocalNotification();
+                                      });
+                                    },
+                                    currentTime: DateTime.now(),
+                                    locale: LocaleType.jp
+                                  );
+                                },
+                                child: const Text(
+                                  'push通知設定',
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                              ),
+
+                              Text(_testPush),
+
+
                             ],
                           ),
                         ),
