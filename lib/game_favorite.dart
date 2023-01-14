@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:release/api/api.dart';
 import 'package:release/common/AdModBanner.dart';
+import 'package:release/common/shared_preferences.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_info.dart';
 import 'package:release/widget/common/drawer_widget.dart';
@@ -28,7 +29,10 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
   String text = "";
 
   Future<void> getFavoriteGame() async {
-    _gameGetx.setLoading(true);
+    // _gameGetx.setLoading(true);
+
+    await SharedPrefe.init();
+
     favoriteGames = [];
     favoriteGames = await ApiClient().getFavoriteGameList();
     setState(() {
@@ -36,7 +40,7 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
         text = "お気に入り登録しているゲームはありません";
       }
     });
-    _gameGetx.setLoading(false);
+    // _gameGetx.setLoading(false);
   }
 
   @override

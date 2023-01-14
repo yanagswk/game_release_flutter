@@ -33,7 +33,7 @@ class ApiClient {
     int? releasedYear,
     int? releasedMonth,
   }) async {
-    print("api実行");
+    print("ゲーム一覧取得api実行");
     print(
       'limit: ${limit},offset: ${offset}, hardware: ${hardware}, isReleased: ${isReleased}, releasedYear: ${releasedYear}, releasedMonth: ${releasedMonth}'
     );
@@ -272,6 +272,7 @@ class ApiClient {
         'device_id': SharedPrefe.getDeviceId(),
       }
     );
+    print("お気に入りapi実行");
     // api実行
     final response = await http.get(uri);
     // json型に変換

@@ -60,29 +60,29 @@ class InitWidget extends StatefulWidget {
 
 class _InitWidgetState extends State<InitWidget> {
 
-  // ローカル通知用
-  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    // ローカル通知用
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  // Getx読み込み
-  final _gameGetx = Get.put(GameGetx());
+    // Getx読み込み
+    final _gameGetx = Get.put(GameGetx());
 
-  // アクティブ画面id
-  int _activeMenuId = 0;
+    // アクティブ画面id
+    int _activeMenuId = 0;
 
-    //ローディング表示の状態
-  bool visibleLoading = true;
+      //ローディング表示の状態
+    bool visibleLoading = true;
 
-  // ボトムナビゲーション遷移画面一覧
-  final _screens = [
-    // ホーム画面
-    const HomePage(),
-    // 検索画面
-    const SearchBar(),
-    // お気に入り画面
-    const GameFavoritePage(),
-    // ニュース記事画面
-    const GameArticle(),
-  ];
+    // ボトムナビゲーション遷移画面一覧
+    final _screens = [
+      // ホーム画面
+      const HomePage(),
+      // 検索画面
+      const SearchBar(),
+      // お気に入り画面
+      const GameFavoritePage(),
+      // ニュース記事画面
+      const GameArticle(),
+    ];
 
   Future init() async {
     await SharedPrefe.init();
@@ -93,7 +93,6 @@ class _InitWidgetState extends State<InitWidget> {
     });
   }
 
-
   @override
     // 最初に一度だけ呼ばれる
   void initState() {
@@ -101,12 +100,12 @@ class _InitWidgetState extends State<InitWidget> {
 
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
-    init();
 
     // 初回起動時に、アプリの通知設定のポップアップを出す
     LocalNotification().requestIOSPermission();
-  }
 
+    init();
+  }
   @override
   Widget build(BuildContext context) {
     return ClipRect(
@@ -114,7 +113,11 @@ class _InitWidgetState extends State<InitWidget> {
         fit: StackFit.expand,
         children: [
           Scaffold(
-            body: _screens[_activeMenuId],
+            // body: _screens[_activeMenuId],
+            body: IndexedStack(
+              index: _activeMenuId,
+              children: _screens,
+            ),
             // ボトムナビゲーション
             bottomNavigationBar: SizedBox(
               child: Container(

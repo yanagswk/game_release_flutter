@@ -30,9 +30,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   // 検索画面判定
   bool _isSearchMood = false;
 
+  Future initSharedPrefe() async {
+    await SharedPrefe.init();
+  }
+
   @override
   void initState() {
     super.initState();
+
+    initSharedPrefe();
 
     _tabController = TabController(vsync: this, length: 2);
     _tabController!.addListener(() {

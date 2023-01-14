@@ -33,7 +33,8 @@ class GameList extends StatefulWidget {
   State<GameList> createState() => _GameListState();
 }
 
-class _GameListState extends State<GameList> {
+// AutomaticKeepAliveClientMixinでStateの状態を保持する
+class _GameListState extends State<GameList> with AutomaticKeepAliveClientMixin {
     // スクロールクラス
   final ScrollController _scrollController = ScrollController();
   // Getx読み込み
@@ -119,6 +120,9 @@ class _GameListState extends State<GameList> {
     });
   }
 
+  @override
+  bool get wantKeepAlive => true;
+
 
   @override
   void dispose() {
@@ -187,6 +191,8 @@ class _GameListState extends State<GameList> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Column(
         children: [
           // ハードウェア選択
