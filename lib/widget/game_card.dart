@@ -78,7 +78,7 @@ class _GameCardState extends State<GameCard> {
           title: Text(
             getGameTitle(),
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.bold
             ),
           ),

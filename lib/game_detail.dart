@@ -86,12 +86,12 @@ class _GameDetailState extends State<GameDetail> {
   // 日付エラー
   bool isDateError = false;
 
-  // 発売日が現在から見て将来の日付か
-  bool isFuture = false;
-
   // 通知時間(テスト)
   String _testPush = "";
   List<String> testDateSplit = [];
+
+  // 発売日が現在から見て将来の日付か
+  bool isFuture = false;
 
   @override
   void initState() {
@@ -514,8 +514,6 @@ class _GameDetailState extends State<GameDetail> {
   }
 
 
-
-
   // ローカルの通知を設定
   void _settingLocalNotification() {
     showCupertinoDialog(
@@ -643,6 +641,69 @@ class _GameDetailState extends State<GameDetail> {
     ),
   );
 
+  /// お気に入りアイコンウィジェット
+  Widget favoriteIconWidget() => IconButton(
+    icon: SizedBox(
+      height: 25,
+      width: 25,
+      child: Icon(
+        game.isFavorite ? Icons.favorite : Icons.favorite_border,//追加
+        color: game.isFavorite ? Colors.red : null,//追
+      ),
+    ),
+    onPressed: () {
+      // お気に入りapiを叩く
+      favoriteGame(game.id, game.isFavorite);
+    }
+  );
+
+
+  /// snsアイコンウィジェット
+  Widget snsIconWidget() => IconButton( // SNS共有
+    icon: const SizedBox(
+      height: 25,
+      width: 25,
+      child: Icon(Icons.ios_share),
+    ),
+    onPressed: () {
+      // SNS共有
+      final share_msg = '${game.title} \n ${game.affiliateUrl}';
+      Share.share(share_msg);
+    }
+  );
+
+
+  /// カレンダーアイコンウィジェット
+  Widget calendarIconWidget() => IconButton( // カレンダー追加
+    icon: const SizedBox(
+      height: 25,
+      width: 25,
+      child: Icon(Icons.calendar_today),
+    ),
+    onPressed: () {
+      // カレンダー追加
+      _calenderAccess();
+    }
+  );
+
+
+  /// 通知アイコンウィジェット
+  Widget notificationIconWidget() => IconButton(
+      icon: SizedBox(
+        height: 25,
+        width: 25,
+        child: Icon(
+          game.isNotification ? Icons.notifications_active : Icons.notifications_none,//追加
+          color: game.isNotification ? Colors.red : null,//追
+        ),
+      ),
+      onPressed: () {
+        // 通知設定or通知キャンセル
+        // game.isNotification ? _notificationCancel() : _settingLocalNotification();
+        game.isNotification ? _notificationCancel() : _notificationRegister();
+      }
+    );
+
   @override
   Widget build(BuildContext context) {
     return ClipRect(
@@ -769,62 +830,25 @@ class _GameDetailState extends State<GameDetail> {
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  IconButton( // お気に入りアイコン
-                                    icon: SizedBox(
-                                      height: 25,
-                                      width: 25,
-                                      child: Icon(
-                                        game.isFavorite ? Icons.favorite : Icons.favorite_border,//追加
-                                        color: game.isFavorite ? Colors.red : null,//追
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      // お気に入りapiを叩く
-                                      favoriteGame(game.id, game.isFavorite);
-                                    }
-                                  ),
-                                  isFuture ?
-                                  IconButton( // 通知アイコン
-                                    icon: SizedBox(
-                                      height: 25,
-                                      width: 25,
-                                      child: Icon(
-                                        game.isNotification ? Icons.notifications_active : Icons.notifications_none,//追加
-                                        color: game.isNotification ? Colors.red : null,//追
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      // 通知設定or通知キャンセル
-                                      // game.isNotification ? _notificationCancel() : _settingLocalNotification();
-                                      game.isNotification ? _notificationCancel() : _notificationRegister();
-                                    }
-                                  ) : const SizedBox(),
-
-                                  IconButton( // カレンダー追加
-                                    icon: SizedBox(
-                                      height: 25,
-                                      width: 25,
-                                      child: Icon(Icons.calendar_today),
-                                    ),
-                                    onPressed: () {
-                                      // カレンダー追加
-                                      _calenderAccess();
-                                    }
-                                  ),
-                                  IconButton( // SNS共有
-                                    icon: SizedBox(
-                                      height: 25,
-                                      width: 25,
-                                      child: Icon(Icons.ios_share),
-                                    ),
-                                    onPressed: () {
-                                      // SNS共有
-                                      final share_msg = '${game.title} \n ${game.affiliateUrl}';
-                                      Share.share(share_msg);
-                                    }
-                                  ),
-                                ],
+                                children: isFuture
+                                ? [
+                                  // お気に入りアイコン
+                                  favoriteIconWidget(),
+                                  // 通知アイコン (発売前のゲームの場合に表示する)
+                                  notificationIconWidget(),
+                                  // カレンダーアイコン
+                                  calendarIconWidget(),
+                                  // snsアイコン
+                                  snsIconWidget()
+                                  ]
+                                : [
+                                  // お気に入りアイコン
+                                  favoriteIconWidget(),
+                                  // カレンダーアイコン
+                                  calendarIconWidget(),
+                                  // snsアイコン
+                                  snsIconWidget()
+                                  ],
                               ),
                               Center(
                                 child: SizedBox(
@@ -848,7 +872,6 @@ class _GameDetailState extends State<GameDetail> {
                                   ),
                                 ),
                               ),
-
 
                               // テスト通知
                               TextButton(
