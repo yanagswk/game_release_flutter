@@ -20,7 +20,7 @@ class GameArticle extends StatefulWidget {
   State<GameArticle> createState() => _GameArticleState();
 }
 
-class _GameArticleState extends State<GameArticle> {
+class _GameArticleState extends State<GameArticle> with AutomaticKeepAliveClientMixin {
   // 記事一覧
   List<GameArticleModel> articles = [];
 
@@ -124,7 +124,11 @@ class _GameArticleState extends State<GameArticle> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: MyAppBar(title: _appTitle),
       drawer: const DrawerWidget(), // サイドバー

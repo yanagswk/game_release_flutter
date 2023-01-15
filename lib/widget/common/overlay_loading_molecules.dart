@@ -21,7 +21,7 @@ class OverlayLoadingMolecules extends StatelessWidget {
     return visible
         ? Container(
             decoration: new BoxDecoration(
-              color: Color.fromRGBO(0, 0, 0, 0.3),
+              color: Color.fromRGBO(0, 0, 0, 0.1),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

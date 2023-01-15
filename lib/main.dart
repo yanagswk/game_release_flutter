@@ -60,29 +60,31 @@ class InitWidget extends StatefulWidget {
 
 class _InitWidgetState extends State<InitWidget> {
 
-    // ローカル通知用
-    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final controller = PageController();
 
-    // Getx読み込み
-    final _gameGetx = Get.put(GameGetx());
+  // ローカル通知用
+  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    // アクティブ画面id
-    int _activeMenuId = 0;
+  // Getx読み込み
+  final _gameGetx = Get.put(GameGetx());
 
-      //ローディング表示の状態
-    bool visibleLoading = true;
+  // アクティブ画面id
+  int _activeMenuId = 0;
 
-    // ボトムナビゲーション遷移画面一覧
-    final _screens = [
-      // ホーム画面
-      const HomePage(),
-      // 検索画面
-      const SearchBar(),
-      // お気に入り画面
-      const GameFavoritePage(),
-      // ニュース記事画面
-      const GameArticle(),
-    ];
+    //ローディング表示の状態
+  bool visibleLoading = true;
+
+  // ボトムナビゲーション遷移画面一覧
+  final _screens = [
+    // ホーム画面
+    const HomePage(),
+    // 検索画面
+    const SearchBar(),
+    // お気に入り画面
+    const GameFavoritePage(),
+    // ニュース記事画面
+    const GameArticle(),
+  ];
 
   Future init() async {
     await SharedPrefe.init();
@@ -113,11 +115,20 @@ class _InitWidgetState extends State<InitWidget> {
         fit: StackFit.expand,
         children: [
           Scaffold(
-            body: _screens[_activeMenuId],
+            // body: _screens[_activeMenuId],
             // body: IndexedStack(
             //   index: _activeMenuId,
             //   children: _screens,
             // ),
+            body: PageView(        /// Wrapping the tabs with PageView
+              controller: controller,
+              children: _screens,
+              onPageChanged: (index) {
+                setState(() {
+                  _activeMenuId = index;     /// Switching bottom tabs
+                });
+              },
+            ),
             // ボトムナビゲーション
             bottomNavigationBar: SizedBox(
               child: Container(
@@ -127,6 +138,7 @@ class _InitWidgetState extends State<InitWidget> {
                     BottomNavigationBar(
                       type: BottomNavigationBarType.fixed,
                       onTap: (index) => {
+                        controller.jumpToPage(index),
                         // 画面更新
                         setState(() => _activeMenuId = index)
                       },
