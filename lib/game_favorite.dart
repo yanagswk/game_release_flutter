@@ -29,7 +29,7 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
   String text = "";
 
   Future<void> getFavoriteGame() async {
-    // _gameGetx.setLoading(true);
+    _gameGetx.setLoading(true);
 
     await SharedPrefe.init();
 
@@ -40,7 +40,7 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
         text = "お気に入り登録しているゲームはありません";
       }
     });
-    // _gameGetx.setLoading(false);
+    _gameGetx.setLoading(false);
   }
 
   @override

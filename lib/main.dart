@@ -113,11 +113,11 @@ class _InitWidgetState extends State<InitWidget> {
         fit: StackFit.expand,
         children: [
           Scaffold(
-            // body: _screens[_activeMenuId],
-            body: IndexedStack(
-              index: _activeMenuId,
-              children: _screens,
-            ),
+            body: _screens[_activeMenuId],
+            // body: IndexedStack(
+            //   index: _activeMenuId,
+            //   children: _screens,
+            // ),
             // ボトムナビゲーション
             bottomNavigationBar: SizedBox(
               child: Container(

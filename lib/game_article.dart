@@ -88,7 +88,7 @@ class _GameArticleState extends State<GameArticle> {
       return ;
     }
 
-    // _gameGetx.setLoading(true);
+    _gameGetx.setLoading(true);
 
     final articleModel = await ApiClient().getGameArticle(
       postType: _postType,
@@ -106,7 +106,7 @@ class _GameArticleState extends State<GameArticle> {
       _appTitle = "${getSiteAppTitle()} ${getPostDateAppTitle()}";
     });
 
-    // _gameGetx.setLoading(false);
+    _gameGetx.setLoading(false);
   }
 
   @override

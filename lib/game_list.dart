@@ -270,15 +270,6 @@ class _GameListInfinityViewState extends State<GameListInfinityView> {
         controller: _scrollController,
         itemCount: widget.contents.length,
         itemBuilder: (context, groupIndex) {
-          // if (widget.contents.length - 1 == groupIndex && isPaging) {
-          //   return const SizedBox(
-          //     height: 35,
-          //     width: 30,
-          //     child: Center(
-          //       child: CircularProgressIndicator(),
-          //     ),
-          //   );
-          // }
           final salesDate = widget.contents.keys.elementAt(groupIndex);
           return Column(
             children: [

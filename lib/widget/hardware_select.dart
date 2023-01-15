@@ -35,6 +35,11 @@ class _HardwareSelectState extends State<HardwareSelect> {
         _hardware = _gameGetx.hardware.value;
       }
     });
+
+    // ハードウェア検知
+    ever(_gameGetx.hardware, (_) => {
+      _hardware = _gameGetx.hardware.value
+    });
   }
 
   void setHardWare(hardware) {
