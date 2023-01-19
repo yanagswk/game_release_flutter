@@ -2,13 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdModBanner extends StatefulWidget {
-  const AdModBanner({super.key});
+
+  // 広告の高さ
+  late double adModHight;
+
+  AdModBanner({
+    super.key,
+    required this.adModHight
+  });
 
   @override
   State<AdModBanner> createState() => _AdModBannerState();
 }
 
 class _AdModBannerState extends State<AdModBanner> {
+
+  // 広告の高さ
+  // late int adModHight;
 
   // バナー広告をインスタンス化
   BannerAd myBanner = BannerAd(
@@ -42,7 +52,7 @@ class _AdModBannerState extends State<AdModBanner> {
 
     return Container(
       color: Colors.white,
-      height: 50.0,
+      height: widget.adModHight,
       width: double.infinity,
       child: AdWidget(ad: myBanner),
     );

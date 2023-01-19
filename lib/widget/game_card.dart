@@ -64,16 +64,21 @@ class _GameCardState extends State<GameCard> {
         child: ListTile(
           leading: Container(
             width: 100,
-            decoration: BoxDecoration(
-              color: Colors.yellow.withOpacity(.5),
-              borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(
-                fit: BoxFit.fitWidth,
-                image: NetworkImage(
-                  game.imageList[0],
-                ),
-              ),
+            // height: 300,
+            child: Image.network(
+              game.imageList[0],
+              fit: BoxFit.cover
             ),
+            // decoration: BoxDecoration(
+            //   color: Colors.yellow.withOpacity(.5),
+            //   borderRadius: BorderRadius.circular(10),
+            //   image: DecorationImage(
+            //     fit: BoxFit.fitWidth,
+            //     image: NetworkImage(
+            //       game.imageList[0],
+            //     ),
+            //   ),
+            // ),
           ),
           title: Text(
             getGameTitle(),

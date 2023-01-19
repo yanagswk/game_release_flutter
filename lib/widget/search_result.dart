@@ -343,7 +343,7 @@ class _SearchResultState extends State<SearchResult> {
                       Expanded(child: Text("")),
 
                       // バナー広告
-                      AdModBanner(),
+                      AdModBanner(adModHight: 50),
                   ]
                 ),
                 // Obx( // getxで検知するように

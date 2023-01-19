@@ -190,7 +190,7 @@ class _SearchBarState extends State<SearchBar> {
           ),
           Expanded(child: Text("")),
           // バナー広告
-          AdModBanner(),
+          AdModBanner(adModHight: 50),
         ]
       ),
     )

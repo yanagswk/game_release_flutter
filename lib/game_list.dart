@@ -203,7 +203,7 @@ class _GameListState extends State<GameList> with AutomaticKeepAliveClientMixin 
                 getContents: getGameList,
           ),
           // バナー広告
-          AdModBanner()
+          AdModBanner(adModHight: 50)
         ],
       );
   }

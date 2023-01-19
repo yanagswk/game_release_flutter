@@ -80,7 +80,7 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
               ),
             ),
             // バナー広告
-            AdModBanner()
+            AdModBanner(adModHight: 50)
           ],
         )
         :
@@ -106,7 +106,7 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
               ),
             ),
             // バナー広告
-            AdModBanner()
+            AdModBanner(adModHight: 50),
           ],
         ),
       )

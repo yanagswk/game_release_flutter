@@ -318,8 +318,6 @@ class ApiClient {
     // api実行
     final response = await http.post(uri);
 
-    print(gameId);
-
     final responseJson = checkStatusCode(response);
 
     return response.statusCode == 200 ? true : false;

@@ -957,7 +957,7 @@ class _GameDetailState extends State<GameDetail> {
                   ),
                 ),
                 // バナー広告
-                AdModBanner()
+                AdModBanner(adModHight: 60)
 
                 // onPressed: openLink,
               ],

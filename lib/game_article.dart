@@ -449,7 +449,7 @@ class _GameArticleInfinityViewState extends State<GameArticleInfinityView> {
                 index % 5 == 0 && index != 0
                 ?
                 // バナー広告
-                AdModBanner()
+                AdModBanner(adModHight: 50.0)
                 :
                 const SizedBox(),
                 Card(
