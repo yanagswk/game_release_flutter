@@ -70,7 +70,7 @@ class SharedPrefe {
 
   /// アプリ内で記事を開くかフラグ取得
   static bool getIsAppDisplay() {
-    return prefs!.getBool('isAppDisplay') ?? false;
+    return prefs!.getBool('isAppDisplay') ?? true;
   }
 
 

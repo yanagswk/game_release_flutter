@@ -38,8 +38,8 @@ class _GameCardState extends State<GameCard> {
 
   /// ゲームタイトルの文字制限
   String getGameTitle() {
-    if (game.title.length >= 50) {
-      return "${game.title.substring(0, 50)}...";
+    if (game.title.length >= 40) {
+      return "${game.title.substring(0, 40)}...";
     }
     return game.title;
   }
@@ -57,60 +57,72 @@ class _GameCardState extends State<GameCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2.0,
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
-      child: Container(
-        child: ListTile(
-          leading: Container(
-            width: 100,
-            // height: 300,
-            child: Image.network(
-              game.imageList[0],
-              fit: BoxFit.cover
-            ),
-            // decoration: BoxDecoration(
-            //   color: Colors.yellow.withOpacity(.5),
-            //   borderRadius: BorderRadius.circular(10),
-            //   image: DecorationImage(
-            //     fit: BoxFit.fitWidth,
-            //     image: NetworkImage(
-            //       game.imageList[0],
-            //     ),
-            //   ),
-            // ),
+    return GestureDetector(
+      onTap: () {
+        // ゲーム詳細画面へ遷移
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) => GameDetail(game: game),
           ),
-          title: Text(
-            getGameTitle(),
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold
-            ),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        ).then((value) {
+          // お気に入り画面に、戻るとき
+          if (isDisplayDate) {
+            gameGetx.trueFavorite();
+          }
+        });
+      },
+      child: Card(
+        elevation: 2.0,
+        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
+          child: Row(
             children: [
-              ItemChip(hardware: game.hardware, width: 70),
-              Text('(税込) ${game.price}円'),
-              isDisplayDate ? Text(game.salesDate): const SizedBox.shrink(),  // フラグがfalseの時は、何も表示しない
-            ]
-          ),
-          trailing: const Icon(Icons.navigate_next),
-          onTap: () async => {
-            // ゲーム詳細画面へ遷移
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (BuildContext context) => GameDetail(game: game),
+              Container(
+                width: 90,
+                height: 90,
+                child: Image.network(
+                  game.imageList[0],
+                  fit: BoxFit.cover
+                ),
               ),
-            ).then((value) {
-              // お気に入り画面に、戻るとき
-              if (isDisplayDate) {
-                gameGetx.trueFavorite();
-              }
-            }),
-          },
+              Container(
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        getGameTitle(),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ItemChip(hardware: game.hardware, width: 70),
+                          Text('(税込) ${game.price}円'),
+                          isDisplayDate ? Text(game.salesDate): const SizedBox.shrink(),  // フラグがfalseの時は、何も表示しない
+                        ]
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.zero,
+                  alignment: Alignment.centerRight,
+                  child: const Icon(
+                    Icons.navigate_next,
+                    color: Colors.grey
+                  ),
+                ),
+              ),
+            ],
+            ),
         ),
-      ),
     );
   }
 }

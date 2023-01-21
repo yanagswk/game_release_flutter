@@ -54,6 +54,8 @@ class _GameListState extends State<GameList> with AutomaticKeepAliveClientMixin 
   // ゲーム情報を日付ごとにグループ化したもの
   Map<String, List<GameInfoModel>> groupGames = {};
 
+  int gameCount = 0;
+
   // アクティブなメニューid
   int activeMenuId = 0;
 
@@ -201,6 +203,7 @@ class _GameListState extends State<GameList> with AutomaticKeepAliveClientMixin 
           GameListInfinityView(
                 contents: groupGames,
                 getContents: getGameList,
+                gameCount: gameCount,
           ),
           // バナー広告
           AdModBanner(adModHight: 50)
@@ -217,10 +220,13 @@ class GameListInfinityView extends StatefulWidget {
   // ゲームを取得する関数
   final Future<dynamic> Function(bool, bool) getContents;
 
-  const GameListInfinityView({
+  int gameCount;
+
+  GameListInfinityView({
     Key? key,
     required this.contents,
     required this.getContents,
+    required this.gameCount
   }) : super(key: key);
 
   @override
@@ -294,9 +300,18 @@ class _GameListInfinityViewState extends State<GameListInfinityView> {
                 physics: const NeverScrollableScrollPhysics(), // ListView.builderをネストする時に指定
                 itemCount: widget.contents[salesDate]?.length,
                 itemBuilder: (context, gameIndex) {
-                  return GameCard(
-                    game: widget.contents[salesDate]![gameIndex],
-                    isDisplayDate: false,
+                  widget.gameCount += 1;
+                  return Column(
+                    children: [
+                      widget.gameCount % 8 == 0 && widget.gameCount != 1
+                        // バナー広告
+                        ? AdModBanner(adModHight: 50)
+                        : const SizedBox(),
+                        GameCard(
+                          game: widget.contents[salesDate]![gameIndex],
+                          isDisplayDate: false,
+                        )
+                    ],
                   );
                 },
               ),
