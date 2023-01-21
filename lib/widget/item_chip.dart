@@ -5,11 +5,13 @@ class ItemChip extends StatefulWidget {
 
   // ハードウェア
   String hardware;
+  bool? isShadow;
   double? width;
 
   ItemChip({
     super.key,
     required this.hardware,
+    this.isShadow,
     this.width
   });
 
@@ -19,9 +21,13 @@ class ItemChip extends StatefulWidget {
 
 class _ItemChipState extends State<ItemChip> {
 
+  late bool isShadow;
+
     @override
   void initState() {
     super.initState();
+
+    isShadow = widget.isShadow ?? false;
   }
 
   /// ハードウェアによって色を返却
@@ -47,6 +53,15 @@ class _ItemChipState extends State<ItemChip> {
       decoration: BoxDecoration(
         color: getHardwareColor(widget.hardware),
         borderRadius: BorderRadius.circular(30),
+        
+        boxShadow: isShadow ? [
+          BoxShadow(
+            color: Colors.black26,
+            spreadRadius: 1.0,
+            blurRadius: 15.0,
+            offset: Offset(10, 10),
+          ),
+        ] : []
       ),
       child: Text(
           widget.hardware,

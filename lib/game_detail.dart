@@ -8,10 +8,12 @@ import 'package:release/common/AdModBanner.dart';
 import 'package:release/common/local_notification.dart';
 import 'package:release/getx/game_getx.dart';
 import 'package:release/models/notification.dart';
+import 'package:release/widget/common/constants.dart';
 import 'package:release/widget/common/my_app_bar.dart';
 import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:release/widget/common/system_widget.dart';
 import 'package:release/widget/item_chip.dart';
+import 'package:release/widget/search_result.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/link.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -734,7 +736,11 @@ class _GameDetailState extends State<GameDetail> {
                                       children: [
                                         ItemChip(hardware: game.hardware),
                                         const SizedBox(width: 10),
-                                        game.genre != null ? ItemChip(hardware: game.genre!) : const SizedBox()
+                                        game.genre != null
+                                          ? ItemChip(
+                                              hardware: game.genre!,
+                                            )
+                                          : const SizedBox()
                                       ],
                                     ),
                                     const SizedBox(height: 5),

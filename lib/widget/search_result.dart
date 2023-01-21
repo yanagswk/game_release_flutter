@@ -346,13 +346,6 @@ class _SearchResultState extends State<SearchResult> {
                       AdModBanner(adModHight: 50),
                   ]
                 ),
-                // Obx( // getxで検知するように
-                //   // 入力欄以外を覆う
-                //   () => OverlayLoadingMolecules(
-                //     visible: _gameGetx.isSearchLoading.value,
-                //     isLoading: false
-                //   )
-                // ),
               ],
             ),
           )
@@ -433,9 +426,16 @@ class _SearchGameInfinityViewState extends State<SearchGameInfinityView> {
           controller: _scrollController,
           itemCount: widget.contents.length,
           itemBuilder: (context, gameIndex) {
-            return GameCard(
-              game: widget.contents[gameIndex],
-              isDisplayDate: true,
+            return Column(
+              children: [
+                gameIndex % 7 == 0 && gameIndex != 0
+                  ? AdModBanner(adModHight: 50)
+                  : const SizedBox(),
+                GameCard(
+                  game: widget.contents[gameIndex],
+                  isDisplayDate: true,
+                ),
+              ],
             );
           },
         ),

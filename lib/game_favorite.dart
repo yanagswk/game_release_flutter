@@ -94,9 +94,16 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
                   itemCount: favoriteGames.length,
                   itemBuilder: (context, index) {
                     if (favoriteGames[index].isDisplay!) {
-                      return GameCard(
-                        game: favoriteGames[index],
-                        isDisplayDate: true
+                      return Column(
+                        children: [
+                          index % 7 == 0 && index != 0
+                            ? AdModBanner(adModHight: 50)
+                            : const SizedBox(),
+                          GameCard(
+                            game: favoriteGames[index],
+                            isDisplayDate: true
+                          ),
+                        ],
                       );
                     } else {
                       return const SizedBox();
