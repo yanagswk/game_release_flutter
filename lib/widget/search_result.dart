@@ -51,12 +51,29 @@ class _SearchResultState extends State<SearchResult> {
   int gameOffset = 0;
 
   String selectMonth = "01";
+  String kariSelectMonth = "01";
   final List<String> _yearMonth = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
 
   String _selectHardware = "All";
+  String _kariSelectHardware = "All";
   final List<String> _hardwareList = ["All", "Switch", "PS5", "PS4"];
 
+  int _kariSelectReleasedType = 2;
+
   int _selectReleasedType = 2;
+
+  String _sort = "asc";
+  String _kariSelectSort = "asc";
+  final List _sortList = [
+    {
+      "name": "古い順",
+      "target": "asc",
+    },
+    {
+      "name": "新しい順",
+      "target": "desc",
+    },
+  ];
 
   // 入力欄のフォーカス
   FocusNode _focus = new FocusNode();
@@ -111,12 +128,12 @@ class _SearchResultState extends State<SearchResult> {
   /// AppBarのタイトル
   void _getAppBarTitle() {
     if (widget.displayType == DisplayType.RELEASE_DATE) {
-        _appTitle = '${widget.year}年発売のゲーム';
-      } else if (widget.displayType == DisplayType.SEARCH) {
-        _appTitle = '${widget.searchWord}';
-      } else if (widget.displayType == DisplayType.GENRE) {
-        _appTitle = '${widget.genre}';
-      }
+      _appTitle = '${widget.year}年発売のゲーム';
+    } else if (widget.displayType == DisplayType.SEARCH) {
+      _appTitle = '${widget.searchWord}';
+    } else if (widget.displayType == DisplayType.GENRE) {
+      _appTitle = '${widget.genre}';
+    }
   }
 
 
@@ -129,7 +146,7 @@ class _SearchResultState extends State<SearchResult> {
           offset: gameOffset,
           year: widget.year,
           month: selectMonth,
-          sort: 'asc'
+          sort: _sort
       );
     } else if (widget.searchWord != null) {
       return await ApiClient().getSearchWordGames(
@@ -137,7 +154,7 @@ class _SearchResultState extends State<SearchResult> {
           searchWord: widget.searchWord!,
           limit: gameLimit,
           offset: gameOffset,
-          sort: 'asc'
+          sort: _sort
       );
     } else if (widget.genre != null) {
       return await ApiClient().getGenreGames(
@@ -146,7 +163,7 @@ class _SearchResultState extends State<SearchResult> {
           isReleased: _selectReleasedType,
           limit: gameLimit,
           offset: gameOffset,
-          sort: 'asc'
+          sort: _sort
       );
     } else {
       _gameGetx.setLoading(false);
@@ -163,10 +180,15 @@ class _SearchResultState extends State<SearchResult> {
         selectMonth;
         _selectHardware;
         _selectReleasedType;
+        _sort;
       });
       gameOffset = 0;
       targetCount = 0;
       SharedPrefe.setIsPaging(true);
+      _selectReleasedType = _kariSelectReleasedType;
+      _selectHardware = _kariSelectHardware;
+      selectMonth = kariSelectMonth;
+      _sort = _kariSelectSort;
     }
 
     // 総数よりも大きくなったらreturnする
@@ -225,114 +247,6 @@ class _SearchResultState extends State<SearchResult> {
               children: [
                 Column(
                   children: [
-                    // 発売年を選択した場合
-                    widget.displayType == DisplayType.RELEASE_DATE ?
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children:
-                          _yearMonth.map((String month) =>
-                            Padding(
-                              padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
-                              child: ChoiceChip(
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
-                                // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
-                                visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
-                                label: Text(
-                                  "${month}月",
-                                  style: TextStyle(
-                                    color: Colors.white
-                                  ),
-                                ),
-                                backgroundColor: Colors.grey[500],
-                                selected: selectMonth == month,
-                                selectedColor: Colors.black,
-                                onSelected:(value) {
-                                  selectMonth = month;
-                                  searchGames(true);
-                                },
-                              ),
-                            ),
-                          ).toList(),
-                      ),
-                    ): const SizedBox(),
-
-                    // ジャンルを選択した場合
-                    widget.displayType == DisplayType.GENRE ?
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
-                          child: ChoiceChip(
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
-                            // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
-                            visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
-                            label: const Text(
-                              "これから発売",
-                              style: TextStyle(
-                                color: Colors.white
-                              ),
-                            ),
-                            backgroundColor: Colors.grey[500],
-                            selected: _selectReleasedType == 2,
-                            selectedColor: Colors.black,
-                            onSelected:(value) {
-                              _selectReleasedType = 2;
-                              searchGames(true);
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
-                          child: ChoiceChip(
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
-                            // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
-                            visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
-                            label: const Text(
-                              "発売済み",
-                              style: TextStyle(
-                                color: Colors.white
-                              ),
-                            ),
-                            backgroundColor: Colors.grey[500],
-                            selected: _selectReleasedType == 1,
-                            selectedColor: Colors.black,
-                            onSelected:(value) {
-                              _selectReleasedType = 1;
-                              searchGames(true);
-                            },
-                          ),
-                        ),
-                      ],
-                    ): const SizedBox(),
-
-                    // ハードウェア
-                    Row(
-                      children: _hardwareList.map((String hardware) =>
-                          Padding(
-                            padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
-                            child: ChoiceChip(
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
-                              // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
-                              visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
-                              label: Text(
-                                "${getHardWareName(hardware)}",
-                                style: TextStyle(
-                                  color: Colors.white
-                                ),
-                              ),
-                              backgroundColor: Colors.grey[500],
-                              selected: _selectHardware == hardware,
-                              selectedColor: getHardwareColor(hardware),
-                              onSelected:(value) {
-                                _selectHardware = hardware;
-                                searchGames(true);
-                              },
-                            ),
-                          ),
-                        ).toList(),
-                    ),
-
                     games.length != 0
                       ?
                       SearchGameInfinityView(
@@ -341,12 +255,269 @@ class _SearchResultState extends State<SearchResult> {
                       )
                       :
                       Expanded(child: Text("")),
-
                       // バナー広告
                       AdModBanner(adModHight: 50),
                   ]
                 ),
               ],
+            ),
+          ),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: FloatingActionButton(
+              child: const Icon(Icons.sort),
+              backgroundColor: Colors.blue[800],
+              onPressed: () {
+                showModalBottomSheet(
+                  //モーダルの背景の色、透過
+                  backgroundColor: Colors.transparent,
+                  //ドラッグ可能にする（高さもハーフサイズからフルサイズになる様子）
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return StatefulBuilder(
+                      builder: (context, StateSetter setState) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height * 0.45,
+                          margin: EdgeInsets.only(top: 64),
+                          decoration: BoxDecoration(
+                            //モーダル自体の色
+                            color: Colors.white,
+                            //角丸にする
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 0, left: 20, right: 0),
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 10),
+
+                                // ジャンルを選択した場合
+                                widget.displayType == DisplayType.RELEASE_DATE ?
+                                Row(
+                                  children: [
+                                    Icon(Icons.article_outlined),
+                                    Text(
+                                      '発売月',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ) : const SizedBox(),
+
+                                // 発売年を選択した場合
+                                widget.displayType == DisplayType.RELEASE_DATE ?
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 10, bottom: 20),
+                                    child: Row(
+                                      children:
+                                        _yearMonth.map((String month) =>
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
+                                            child: ChoiceChip(
+                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                                              // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
+                                              visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                                              label: Text(
+                                                "${month}月",
+                                                style: TextStyle(
+                                                  color: Colors.white
+                                                ),
+                                              ),
+                                              backgroundColor: Colors.grey[500],
+                                              selected: kariSelectMonth == month,
+                                              selectedColor: Colors.black,
+                                              onSelected:(value) {
+                                                setState(() {
+                                                  kariSelectMonth = month;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ).toList(),
+                                    ),
+                                  ),
+                                ): const SizedBox(),
+
+                                // ジャンルを選択した場合
+                                widget.displayType == DisplayType.GENRE ?
+                                Row(
+                                  children: [
+                                    Icon(Icons.article_outlined),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      '期間',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ) : const SizedBox(),
+
+                                // ジャンルを選択した場合
+                                widget.displayType == DisplayType.GENRE ?
+                                Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                                      child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
+                                            child: ChoiceChip(
+                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                                              // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
+                                              visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                                              label: const Text(
+                                                "これから発売",
+                                                style: TextStyle(
+                                                  color: Colors.white
+                                                ),
+                                              ),
+                                              backgroundColor: Colors.grey[500],
+                                              selected: _kariSelectReleasedType == 2,
+                                              selectedColor: Colors.black,
+                                              onSelected:(value) {
+                                                setState(() {
+                                                  _kariSelectReleasedType = 2;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 3.0,bottom: 3.0, left: 5.0, right: 5.0),
+                                            child: ChoiceChip(
+                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                                              // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
+                                              visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                                              label: const Text(
+                                                "発売済み",
+                                                style: TextStyle(
+                                                  color: Colors.white
+                                                ),
+                                              ),
+                                              backgroundColor: Colors.grey[500],
+                                              selected: _kariSelectReleasedType == 1,
+                                              selectedColor: Colors.black,
+                                              onSelected:(value) {
+                                                setState(() => {
+                                                  _kariSelectReleasedType = 1,
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ]): const SizedBox(),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.videogame_asset_outlined),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        '機種',
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // ハードウェア
+                                Row(
+                                  children: _hardwareList.map((String hardware) =>
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 3.0, bottom: 10.0, left: 5.0, right: 5.0),
+                                        child: ChoiceChip(
+                                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                                          // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
+                                          visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                                          label: Text(
+                                            "${getHardWareName(hardware)}",
+                                            style: TextStyle(
+                                              color: Colors.white
+                                            ),
+                                          ),
+                                          backgroundColor: Colors.grey[500],
+                                          selected: _kariSelectHardware == hardware,
+                                          selectedColor: getHardwareColor(hardware),
+                                          onSelected:(value) {
+                                            setState(() {
+                                              _kariSelectHardware = hardware;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ).toList(),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.sort),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        '順番',
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Row(
+                                  children: _sortList.map((sort) =>
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 3.0, bottom: 10.0, left: 5.0, right: 5.0),
+                                        child: ChoiceChip(
+                                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 追加：上下の余計なmarginを削除
+                                          // labelPadding: EdgeInsets.symmetric(horizontal: 1), // 追加：文字左右の多すぎるpaddingを調整
+                                          visualDensity: VisualDensity(horizontal: 0.0, vertical: -1), // 追加：文字上下の多すぎるpaddingを調整
+                                          label: Text(
+                                            sort["name"],
+                                            style: TextStyle(
+                                              color: Colors.white
+                                            ),
+                                          ),
+                                          backgroundColor: Colors.grey[500],
+                                          selected: _kariSelectSort == sort["target"],
+                                          selectedColor: Colors.black,
+                                          onSelected:(value) {
+                                            setState(() {
+                                              print(sort["target"]);
+                                              _kariSelectSort = sort["target"];
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ).toList(),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue[800], //ボタンの背景色
+                                      ),
+                                      onPressed: (){
+                                        Navigator.of(context).pop();
+                                        searchGames(true);
+                                      },
+                                      child: Text(
+                                        'この条件で検索する',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+                        );
+                      },
+                    );
+                  });
+              }
             ),
           )
         ),

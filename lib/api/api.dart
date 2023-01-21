@@ -172,7 +172,7 @@ class ApiClient {
   }) async {
     print("検索api実行");
     print(
-      'limit: ${limit},offset: ${offset}, hardware: ${hardware}, genre: ${genre}, isReleased :${isReleased}'
+      'limit: ${limit},offset: ${offset}, hardware: ${hardware}, genre: ${genre}, isReleased :${isReleased}, sort :${sort}'
     );
 
     final params = {
