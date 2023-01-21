@@ -786,9 +786,38 @@ class _GameDetailState extends State<GameDetail> {
                             buildIndicator()
                           ],
                         ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, right: 10),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                minimumSize: MaterialStateProperty.all(Size.zero),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              // style: ElevatedButton.styleFrom(
+                              //   backgroundColor: Colors.grey[100],
+                              //   foregroundColor: Colors.blue,
+                              // ),
+                              onPressed: (){
+                                launchUrl(
+                                  Uri.parse(game.affiliateUrl),
+                                  mode: LaunchMode.externalApplication,   // デフォルトのブラウザで開く(参考: https://zenn.dev/tsuruo/articles/56f3abbb132f90)
+                                );
+                              },
+                              child: const Text(
+                                '出典: 楽天ブックス',
+                                style: TextStyle(
+                                  fontSize: 12
+                                ),
+                              )
+                            ),
+                          ),
+                        ),
                         // 値段、評価点
                         Container(
-                          margin: const EdgeInsets.only(top: 30, left: 30, right: 30, bottom: 10),
+                          margin: const EdgeInsets.only(top: 10, left: 30, right: 30, bottom: 10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -904,8 +933,6 @@ class _GameDetailState extends State<GameDetail> {
                               ),
 
                               Text(_testPush),
-
-
                             ],
                           ),
                         ),
@@ -930,23 +957,26 @@ class _GameDetailState extends State<GameDetail> {
                         ),
                         const SizedBox(height: 20),
                         Center(
-                          child: SizedBox(
-                            width: 350,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orange,
-                                foregroundColor: Colors.white
-                              ),
-                              onPressed: () {
-                                final url = Uri.parse(game.affiliateUrl);
-                                launchUrl(
-                                  url,
-                                  mode: LaunchMode.externalApplication,   // デフォルトのブラウザで開く(参考: https://zenn.dev/tsuruo/articles/56f3abbb132f90)
-                                );
-                              },
-                              child: Text(
-                                'Rakutenで購入',
-                                style: TextStyle(fontWeight: FontWeight.bold)
+                          child: Container(
+                            margin: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 30.0),
+                            child: SizedBox(
+                              width: 350,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.orange,
+                                  foregroundColor: Colors.white
+                                ),
+                                onPressed: () {
+                                  final url = Uri.parse(game.affiliateUrl);
+                                  launchUrl(
+                                    url,
+                                    mode: LaunchMode.externalApplication,   // デフォルトのブラウザで開く(参考: https://zenn.dev/tsuruo/articles/56f3abbb132f90)
+                                  );
+                                },
+                                child: Text(
+                                  'Rakutenで購入',
+                                  style: TextStyle(fontWeight: FontWeight.bold)
+                                ),
                               ),
                             ),
                           ),

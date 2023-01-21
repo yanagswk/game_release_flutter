@@ -7,7 +7,7 @@ class GameArticleModel {
   /// 記事のサイト名
   final String siteName;
   /// 記事のurl
-  final Uri siteUrl;
+  final String siteUrl;
   /// 記事のタイトル
   final String title;
   /// ジャンル
@@ -34,7 +34,8 @@ class GameArticleModel {
       id: map['id'],
       siteId: map['site_id'],
       siteName: map['site_name'],
-      siteUrl: Uri.parse(map['site_url']),
+      // siteUrl: Uri.parse(map['site_url']),
+      siteUrl: map['site_url'],
       title: map['title'],
       genre: map['genre'],
       topImageUrl: map['top_image_url'],

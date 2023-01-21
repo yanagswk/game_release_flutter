@@ -8,13 +8,19 @@ class MyAppBar extends StatefulWidget with PreferredSizeWidget {
   // AppBarタイトル
   String title;
 
+  // appBarアクション
+  List<Widget>? actions;
+
+  // int size
+
   @override
   // Size get preferredSize => Size.fromHeight(kToolbarHeight);
   Size get preferredSize => Size.fromHeight(45.0);
 
   MyAppBar({
     super.key,
-    required this.title
+    required this.title,
+    this.actions
   });
 
   @override
@@ -32,6 +38,7 @@ class _MyAppBarState extends State<MyAppBar> {
             color: Colors.white
           ),
         ),
+        actions: widget.actions
       );
   }
 }

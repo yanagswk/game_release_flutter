@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
@@ -12,9 +15,17 @@ import 'package:release/widget/common/overlay_loading_molecules.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
 
 class GameArticle extends StatefulWidget {
   const GameArticle({super.key});
+
+  Size get preferredSize => Size.fromHeight(45.0);
 
   @override
   State<GameArticle> createState() => _GameArticleState();
@@ -51,6 +62,8 @@ class _GameArticleState extends State<GameArticle> with AutomaticKeepAliveClient
 
   // Getx読み込み
   final _gameGetx = Get.put(GameGetx());
+
+  
 
 
   String getSiteAppTitle() {
@@ -391,14 +404,7 @@ class _GameArticleInfinityViewState extends State<GameArticleInfinityView> {
     return title;
   }
 
-    /// 外部サイトへ遷移する
-  Future _launchUrl(Uri url) async {
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      throw 'Unable to launch url $url';
-    }
-  }
+
 
   @override
   void initState() {
@@ -442,7 +448,21 @@ class _GameArticleInfinityViewState extends State<GameArticleInfinityView> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              _launchUrl(widget.articles[index].siteUrl);
+              // _launchUrl(widget.articles[index].siteUrl);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext _context) => WebViewStack(
+                    title: widget.articles[index].title,
+                    url: widget.articles[index].siteUrl,
+                  ),
+                  // builder: (BuildContext _context) => WebViewScreen(
+                  //   title: widget.articles[index].title,
+                  //   url: widget.articles[index].siteUrl,
+                  // ),
+                ),
+              );
+
             },
             child: Column(
               children: [
@@ -517,3 +537,177 @@ class _GameArticleInfinityViewState extends State<GameArticleInfinityView> {
     );
   }
 }
+
+
+
+
+
+
+
+// 参考: https://codelabs.developers.google.com/codelabs/flutter-webview?hl=ja#0
+class WebViewStack extends StatefulWidget {
+
+  String title;
+  String url;
+
+  WebViewStack({
+    Key? key,
+    required this.title,
+    required this.url
+  }) : super(key: key);
+
+  @override
+  State<WebViewStack> createState() => _WebViewStackState();
+}
+
+class _WebViewStackState extends State<WebViewStack> {
+  var loadingPercentage = 0;
+
+  final controller = Completer<WebViewController>();
+
+  bool _isLoading = false;
+
+    @override
+  void initState() {
+    super.initState();
+    if (Platform.isAndroid) {
+      WebView.platform = SurfaceAndroidWebView();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: MyAppBar(
+        title: widget.title,
+        actions: [
+          NavigationControls(controller: controller, url: widget.url),
+        ],
+      ),
+      body: Stack(
+        children: [
+          WebView(
+            initialUrl: widget.url,
+            // jsを有効化
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (webViewController) {
+              controller.complete(webViewController);
+            },
+            onPageStarted: (url) {
+              setState(() {
+                loadingPercentage = 0;
+              });
+            },
+            onProgress: (progress) {
+              setState(() {
+                loadingPercentage = progress;
+              });
+            },
+            onPageFinished: (url) {
+              setState(() {
+                loadingPercentage = 100;
+              });
+            },
+          ),
+          if (loadingPercentage < 100)
+            LinearProgressIndicator(
+              value: loadingPercentage / 100.0,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+
+// webview版のappBarメニュー
+class NavigationControls extends StatelessWidget {
+
+  NavigationControls({
+    required this.controller,
+    required this.url,
+    Key? key
+    })
+      : super(key: key);
+
+  final Completer<WebViewController> controller;
+
+  final String url;
+
+  /// 外部サイトへ遷移する
+  Future _launchUrl(Uri url) async {
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Unable to launch url $url';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<WebViewController>(
+      future: controller.future,
+      builder: (context, snapshot) {
+        final WebViewController? controller = snapshot.data;
+        if (snapshot.connectionState != ConnectionState.done ||
+            controller == null) {
+          return Row(
+            children: const[
+              Icon(Icons.arrow_back_ios),
+              Icon(Icons.arrow_forward_ios),
+              Icon(Icons.replay),
+              Icon(Icons.ios_share_sharp),
+            ],
+          );
+        }
+
+        return Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              iconSize: 18,
+              constraints: const BoxConstraints(),
+              // padding: EdgeInsets.zero,
+              onPressed: () async {
+                if (await controller.canGoBack()) {
+                  await controller.goBack();
+                }
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.arrow_forward_ios),
+              iconSize: 18,
+              constraints: const BoxConstraints(),
+              // padding: EdgeInsets.zero,
+              onPressed: () async {
+                if (await controller.canGoForward()) {
+                  await controller.goForward();
+                }
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.replay),
+              iconSize: 18,
+              constraints: const BoxConstraints(),
+              // padding: EdgeInsets.zero,
+              onPressed: () {
+                controller.reload();
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.open_in_new),
+              iconSize: 18,
+              constraints: const BoxConstraints(),
+              // padding: EdgeInsets.zero,
+              onPressed: () {
+                _launchUrl(Uri.parse(url));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+
