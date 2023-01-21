@@ -6,6 +6,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:release/common/local_notification.dart';
 import 'package:release/common/shared_preferences.dart';
 import 'package:release/game_article.dart';
+import 'package:release/game_article_site.dart';
 import 'package:release/game_detail.dart';
 import 'package:release/game_favorite.dart';
 import 'package:release/game_list.dart';
@@ -83,7 +84,8 @@ class _InitWidgetState extends State<InitWidget> {
     // お気に入り画面
     const GameFavoritePage(),
     // ニュース記事画面
-    const GameArticle(),
+    // const GameArticle(),
+    const GameArticleSite(),
   ];
 
   Future init() async {

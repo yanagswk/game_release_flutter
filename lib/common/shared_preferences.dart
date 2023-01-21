@@ -62,6 +62,16 @@ class SharedPrefe {
     return prefs!.getBool('isPaging') ?? false;
   }
 
+  /// アプリ内で記事を開くか設定
+  static void setIsAppDisplay(bool isAppDisplay) {
+    prefs!.setBool('isAppDisplay', isAppDisplay);
+  }
+
+
+  /// アプリ内で記事を開くかフラグ取得
+  static bool getIsAppDisplay() {
+    return prefs!.getBool('isAppDisplay') ?? false;
+  }
 
 
 }
