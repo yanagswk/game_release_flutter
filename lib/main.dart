@@ -32,6 +32,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:release/widget/search_bar.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
 
 void main() async {
@@ -98,6 +99,15 @@ class _InitWidgetState extends State<InitWidget> {
     });
   }
 
+  // トラッキング表示
+  Future<void> initPlugin() async {
+    final status = await AppTrackingTransparency.trackingAuthorizationStatus;
+    if (status == TrackingStatus.notDetermined) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      await AppTrackingTransparency.requestTrackingAuthorization();
+    }
+  }
+
   @override
     // 最初に一度だけ呼ばれる
   void initState() {
@@ -106,10 +116,9 @@ class _InitWidgetState extends State<InitWidget> {
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
 
-    // 初回起動時に、アプリの通知設定のポップアップを出す
     LocalNotification().requestIOSPermission();
-
     init();
+    initPlugin();
   }
   @override
   Widget build(BuildContext context) {

@@ -60,5 +60,7 @@
 	<key>PermissionGroupNotification</key>
     <string>ローカル通知をするため</string>
     <!-- ↑flutter_local_notificationsの設定で許可ダイアログを出すので、実際はこの文章は使われない模様 -->
+	<key>NSUserTrackingUsageDescription</key>
+    <string>表示する広告を適切に選択するために使用します。</string>
 </dict>
 </plist>
