@@ -792,35 +792,6 @@ class _GameDetailState extends State<GameDetail> {
                             buildIndicator()
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10, right: 10),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              style: ButtonStyle(
-                                padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                minimumSize: MaterialStateProperty.all(Size.zero),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              // style: ElevatedButton.styleFrom(
-                              //   backgroundColor: Colors.grey[100],
-                              //   foregroundColor: Colors.blue,
-                              // ),
-                              onPressed: (){
-                                launchUrl(
-                                  Uri.parse(game.affiliateUrl),
-                                  mode: LaunchMode.externalApplication,   // デフォルトのブラウザで開く(参考: https://zenn.dev/tsuruo/articles/56f3abbb132f90)
-                                );
-                              },
-                              child: const Text(
-                                '出典: 楽天ブックス',
-                                style: TextStyle(
-                                  fontSize: 12
-                                ),
-                              )
-                            ),
-                          ),
-                        ),
                         // 値段、評価点
                         Container(
                           margin: const EdgeInsets.only(top: 10, left: 30, right: 30, bottom: 10),
@@ -988,14 +959,32 @@ class _GameDetailState extends State<GameDetail> {
                           ),
                         ),
                         const SizedBox(height: 20),
+                        TextButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(EdgeInsets.zero),
+                            minimumSize: MaterialStateProperty.all(Size.zero),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: (){
+                            launchUrl(
+                              Uri.parse("https://webservice.rakuten.co.jp/"),
+                              mode: LaunchMode.externalApplication,   // デフォルトのブラウザで開く(参考: https://zenn.dev/tsuruo/articles/56f3abbb132f90)
+                            );
+                          },
+                          child: const Text(
+                            '情報提供: Rakuten Webservice',
+                            style: TextStyle(
+                              fontSize: 12
+                            ),
+                          )
+                        ),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
                 ),
                 // バナー広告
                 AdModBanner(adModHight: 60)
-
-                // onPressed: openLink,
               ],
             )
           ),
