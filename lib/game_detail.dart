@@ -843,7 +843,7 @@ class _GameDetailState extends State<GameDetail> {
                                   // 通知アイコン (発売前のゲームの場合に表示する)
                                   notificationIconWidget(),
                                   // カレンダーアイコン
-                                  calendarIconWidget(),
+                                  // calendarIconWidget(),
                                   // snsアイコン
                                   snsIconWidget()
                                   ]
@@ -851,7 +851,7 @@ class _GameDetailState extends State<GameDetail> {
                                   // お気に入りアイコン
                                   favoriteIconWidget(),
                                   // カレンダーアイコン
-                                  calendarIconWidget(),
+                                  // calendarIconWidget(),
                                   // snsアイコン
                                   snsIconWidget()
                                   ],
