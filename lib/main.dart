@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:ffi';
+// import 'dart:ffi';
 import 'dart:io';
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:release/common/local_notification.dart';
 import 'package:release/common/shared_preferences.dart';
@@ -35,7 +36,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize(); 
+  MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 
@@ -117,31 +118,25 @@ class _InitWidgetState extends State<InitWidget> {
         fit: StackFit.expand,
         children: [
           Scaffold(
-            // body: _screens[_activeMenuId],
-            // body: IndexedStack(
-            //   index: _activeMenuId,
-            //   children: _screens,
-            // ),
-            body: PageView(        /// Wrapping the tabs with PageView
+            body: PageView(
               controller: controller,
               children: _screens,
               onPageChanged: (index) {
                 setState(() {
-                  _activeMenuId = index;     /// Switching bottom tabs
+                  _activeMenuId = index;
                 });
               },
             ),
             // ボトムナビゲーション
             bottomNavigationBar: SizedBox(
               child: Container(
-                height: 80,
+                height:  MediaQuery.of(context).size.height * 0.085,
                 child: Wrap(
                   children: [
                     BottomNavigationBar(
                       type: BottomNavigationBarType.fixed,
                       onTap: (index) => {
                         controller.jumpToPage(index),
-                        // 画面更新
                         setState(() => _activeMenuId = index)
                       },
                       currentIndex: _activeMenuId,
