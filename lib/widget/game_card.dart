@@ -8,6 +8,7 @@ import 'package:release/getx/game_getx.dart';
 import 'package:release/models/game_info.dart';
 import 'package:release/widget/item_chip.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 /// ゲームカードwidget
 class GameCard extends StatefulWidget {
@@ -79,13 +80,16 @@ class _GameCardState extends State<GameCard> {
               Container(
                 width: 90,
                 height: 90,
-                child: Image.network(
-                  game.imageList[0],
-                  fit: BoxFit.cover
+                child: CachedNetworkImage(
+                  imageUrl: game.imageList[0],
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
                 ),
               ),
               Container(
-                width: MediaQuery.of(context).size.width * 0.7,
+                width: MediaQuery.of(context).size.width * 0.65,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 8, right: 8),
                   child: Column(

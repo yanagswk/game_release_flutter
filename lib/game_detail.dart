@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -632,14 +633,12 @@ class _GameDetailState extends State<GameDetail> {
     //画像間の隙間
     margin: EdgeInsets.symmetric(horizontal: 13),
     color: Colors.white,
-    child: Image.network(
-      game.imageList[index],
-      errorBuilder: (c, o, s) {
-        return const Icon(
-          Icons.downloading,
-          color: Colors.grey,
-        );
-      },
+    child: CachedNetworkImage(
+      imageUrl: game.imageList[index],
+      placeholder: (context, url) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      errorWidget: (context, url, dynamic error) => const Icon(Icons.error),
     ),
   );
 
