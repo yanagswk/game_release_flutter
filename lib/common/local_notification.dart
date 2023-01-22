@@ -131,12 +131,10 @@ class LocalNotification {
           int.parse(dateList[0]),
           int.parse(dateList[1]),
           int.parse(dateList[2]),
-          int.parse(dateList[3]),
-          int.parse(dateList[4]),
-          // 0,
-          // 0
+          0,
+          0
         ),
-        // DateTime(2022,12,29,14,49),
+        // DateTime(2023,1,22,15,40),
         tz.local
       ),
       platformChannelSpecifics,

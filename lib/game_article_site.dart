@@ -78,7 +78,7 @@ class _GameArticleSiteState extends State<GameArticleSite> {
   Widget build(BuildContext context) {
     // super.build(context);
     return Scaffold(
-      appBar: MyAppBar(title: "記事一覧"),
+      appBar: MyAppBar(title: "ゲームニュースサイト一覧"),
       body: Container(
         decoration: BoxDecoration(color: Colors.grey[200]),
         child: Column(
@@ -153,10 +153,10 @@ class _GameArticleSiteState extends State<GameArticleSite> {
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    height: 30,
-                                    child: Image.asset(siteList[index]["image"])
-                                  )
+                                  // Container(
+                                  //   height: 30,
+                                  //   child: Image.asset(siteList[index]["image"])
+                                  // )
                                   // Expanded(
                                   //   flex: 2,
                                   //   child: Image.asset(siteList[index]["image"]),

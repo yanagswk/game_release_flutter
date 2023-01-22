@@ -195,8 +195,6 @@ class _GameArticleState extends State<GameArticle> with AutomaticKeepAliveClient
                                   child: Column(
                                     children: [
                                       Row(
-                                        // crossAxisAlignment:CrossAxisAlignment.start,
-                                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(
                                             child: ListTile(
@@ -448,7 +446,6 @@ class _GameArticleInfinityViewState extends State<GameArticleInfinityView> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              // _launchUrl(widget.articles[index].siteUrl);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -456,10 +453,6 @@ class _GameArticleInfinityViewState extends State<GameArticleInfinityView> {
                     title: widget.articles[index].title,
                     url: widget.articles[index].siteUrl,
                   ),
-                  // builder: (BuildContext _context) => WebViewScreen(
-                  //   title: widget.articles[index].title,
-                  //   url: widget.articles[index].siteUrl,
-                  // ),
                 ),
               );
 

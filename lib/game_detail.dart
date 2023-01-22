@@ -551,14 +551,14 @@ class _GameDetailState extends State<GameDetail> {
   // 通知設定
   Future _setNotification() async {
     // 通知登録api叩く
-    // notification = await ApiClient().notificationRegister(game.id);
-    notification = await ApiClient().notificationRegister(10000);
+    notification = await ApiClient().notificationRegister(game.id);
+    // notification = await ApiClient().notificationRegister(10000);
 
     LocalNotification().requestIOSPermission();
     LocalNotification().initializePlatformSpecifics();
     LocalNotification().scheduleNotification(
-      // salesDateSplit,
-      testDateSplit,
+      salesDateSplit,
+      // testDateSplit,
       game.title,
       notification.notificationId
     );
@@ -700,8 +700,8 @@ class _GameDetailState extends State<GameDetail> {
       ),
       onPressed: () {
         // 通知設定or通知キャンセル
-        // game.isNotification ? _notificationCancel() : _settingLocalNotification();
-        game.isNotification ? _notificationCancel() : _notificationRegister();
+        game.isNotification ? _notificationCancel() : _settingLocalNotification();
+        // game.isNotification ? _notificationCancel() : _notificationRegister();
       }
     );
 
@@ -879,34 +879,34 @@ class _GameDetailState extends State<GameDetail> {
                               ),
 
                               // テスト通知
-                              TextButton(
-                                onPressed: () {
-                                    DatePicker.showDateTimePicker(context,
-                                    showTitleActions: true,
-                                    // showSecondsColumn: false, // 「秒」を表示するか 初期値true
-                                    onConfirm: (date) {
-                                      // 時間を変更して完了ボタンを押したら検知
-                                      setState(() {
-                                        testDateSplit = [
-                                          date.year.toString(),
-                                          date.month.toString(),
-                                          date.day.toString(),
-                                          date.hour.toString(),
-                                          date.minute.toString(),
-                                        ];
-                                        _testPush = "${date.year.toString()}/${date.month.toString()}/${date.day.toString()} ${date.hour.toString()}:${date.minute.toString()}";
-                                        _settingLocalNotification();
-                                      });
-                                    },
-                                    currentTime: DateTime.now(),
-                                    locale: LocaleType.jp
-                                  );
-                                },
-                                child: const Text(
-                                  'push通知設定',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                              ),
+                              // TextButton(
+                              //   onPressed: () {
+                              //       DatePicker.showDateTimePicker(context,
+                              //       showTitleActions: true,
+                              //       // showSecondsColumn: false, // 「秒」を表示するか 初期値true
+                              //       onConfirm: (date) {
+                              //         // 時間を変更して完了ボタンを押したら検知
+                              //         setState(() {
+                              //           testDateSplit = [
+                              //             date.year.toString(),
+                              //             date.month.toString(),
+                              //             date.day.toString(),
+                              //             date.hour.toString(),
+                              //             date.minute.toString(),
+                              //           ];
+                              //           _testPush = "${date.year.toString()}/${date.month.toString()}/${date.day.toString()} ${date.hour.toString()}:${date.minute.toString()}";
+                              //           _settingLocalNotification();
+                              //         });
+                              //       },
+                              //       currentTime: DateTime.now(),
+                              //       locale: LocaleType.jp
+                              //     );
+                              //   },
+                              //   child: const Text(
+                              //     'push通知設定',
+                              //     style: TextStyle(color: Colors.blue),
+                              //   ),
+                              // ),
 
                               Text(_testPush),
                             ],
