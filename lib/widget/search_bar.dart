@@ -121,6 +121,7 @@ class _SearchBarState extends State<SearchBar> {
       decoration: BoxDecoration(color: Colors.grey[200]),
       child: Column(
         children: [
+          const SizedBox(height: 10),
           Text("発売した年から探す"),
           // ReleasedYearSelect(),
           Container(

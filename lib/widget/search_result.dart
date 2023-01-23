@@ -58,9 +58,8 @@ class _SearchResultState extends State<SearchResult> {
   String _kariSelectHardware = "All";
   final List<String> _hardwareList = ["All", "Switch", "PS5", "PS4"];
 
-  int _kariSelectReleasedType = 2;
-
-  int _selectReleasedType = 2;
+  int _kariSelectReleasedType = 1;
+  int _selectReleasedType = 1;
 
   String _sort = "asc";
   String _kariSelectSort = "asc";

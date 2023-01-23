@@ -37,7 +37,7 @@ class _GameFavoritePageState extends State<GameFavoritePage> {
     favoriteGames = await ApiClient().getFavoriteGameList();
     setState(() {
       if (favoriteGames.length == 0) {
-        text = "お気に入り登録しているゲームはありません";
+        text = "";
       }
     });
     _gameGetx.setLoading(false);
