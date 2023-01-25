@@ -127,7 +127,7 @@ class _SearchResultState extends State<SearchResult> {
   /// AppBarのタイトル
   void _getAppBarTitle() {
     if (widget.displayType == DisplayType.RELEASE_DATE) {
-      _appTitle = '${widget.year}年発売のゲーム';
+      _appTitle = '${widget.year}年${selectMonth}月発売';
     } else if (widget.displayType == DisplayType.SEARCH) {
       _appTitle = '${widget.searchWord}';
     } else if (widget.displayType == DisplayType.GENRE) {
@@ -189,6 +189,8 @@ class _SearchResultState extends State<SearchResult> {
       selectMonth = kariSelectMonth;
       _sort = _kariSelectSort;
     }
+
+    _getAppBarTitle();
 
     // 総数よりも大きくなったらreturnする
     if (targetCount != 0 && targetCount < gameOffset) {
@@ -291,6 +293,7 @@ class _SearchResultState extends State<SearchResult> {
                           child: Padding(
                             padding: const EdgeInsets.only(top: 10, bottom: 0, left: 20, right: 0),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 10),
 

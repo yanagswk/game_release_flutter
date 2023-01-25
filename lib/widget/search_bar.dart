@@ -44,7 +44,7 @@ class _SearchBarState extends State<SearchBar> {
   bool _isFocus = false;
 
   // 発売した年一覧
-  final List<int> _yearList = [2023, 2022, 2021, 2020];
+  final List<int> _yearList = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014];
 
   // ジャンルー一覧
   final List<String> _genreList = [
