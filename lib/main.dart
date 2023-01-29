@@ -140,7 +140,6 @@ class _InitWidgetState extends State<InitWidget> {
             // ボトムナビゲーション
             bottomNavigationBar: SizedBox(
               child: Container(
-                height:  MediaQuery.of(context).size.height * 0.085,
                 child: Wrap(
                   children: [
                     BottomNavigationBar(
