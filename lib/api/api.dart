@@ -12,7 +12,7 @@ import 'package:release/models/notification.dart';
 class ApiClient {
 
   // final host = 'localhost';
-  final host = 'yurubo0.com';
+  // final host = 'yurubo0.com';
 
   /// ステータスコードチェック
   checkStatusCode(response) {
@@ -22,6 +22,21 @@ class ApiClient {
       print(response.body);
       throw Exception('${response.body}');
     }
+  }
+
+
+  /// uri作成
+  Uri createUri(String url, Map<String, String> params) {
+    return Uri.https(
+      "yurubo0.com",
+      url,
+      params
+    );
+    // return Uri.http(
+    //   "localhost",
+    //   url,
+    //   params
+    // );
   }
 
   /// 楽天apiから取得したゲーム情報を取得
@@ -48,11 +63,12 @@ class ApiClient {
       'releasedMonth': '${releasedMonth}',
     };
 
-    final uri = Uri.https(
-      host,
-      '/api/games/info',
-      params
-    );
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/games/info',
+    //   params
+    // );
+    final uri = createUri('/api/games/info', params);
     // api実行
     final response = await http.get(uri);
     final responseJson = checkStatusCode(response);
@@ -97,11 +113,12 @@ class ApiClient {
       'sort': '$sort',
     };
 
-    final uri = Uri.https(
-      host,
-      '/api/games/info',
-      params
-    );
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/games/info',
+    //   params
+    // );
+    final uri = createUri('/api/games/info', params);
     // api実行
     final response = await http.get(uri);
     final responseJson = checkStatusCode(response);
@@ -140,11 +157,12 @@ class ApiClient {
       'sort': '$sort',
     };
 
-    final uri = Uri.https(
-      host,
-      '/api/games/info',
-      params
-    );
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/games/info',
+    //   params
+    // );
+    final uri = createUri('/api/games/info', params);
     // api実行
     final response = await http.get(uri);
     final responseJson = checkStatusCode(response);
@@ -185,11 +203,12 @@ class ApiClient {
       'sort': '$sort',
     };
 
-    final uri = Uri.https(
-      host,
-      '/api/games/info',
-      params
-    );
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/games/info',
+    //   params
+    // );
+    final uri = createUri('/api/games/info', params);
     // api実行
     final response = await http.get(uri);
     final responseJson = checkStatusCode(response);
@@ -224,11 +243,12 @@ class ApiClient {
       'offset': '0',
     };
 
-    final uri = Uri.https(
-      host,
-      '/api/games/released',
-      params
-    );
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/games/released',
+    //   params
+    // );
+    final uri = createUri('/api/games/released', params);
     // api実行
     final response = await http.get(uri);
     // json型に変換
@@ -244,8 +264,14 @@ class ApiClient {
 
   /// デバイス情報登録
   Future registerDeviceInfo(String deviceId) async {
-    final uri = Uri.https(
-      host,
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/register/device',
+    //   {
+    //     'device_id': '$deviceId',
+    //   }
+    // );
+    final uri = createUri(
       '/api/register/device',
       {
         'device_id': '$deviceId',
@@ -265,14 +291,20 @@ class ApiClient {
 
   /// お気に入りゲーム一覧取得
   Future getFavoriteGameList() async {
-    final uri = Uri.https(
-      host,
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/games/favorite',
+    //   {
+    //     'device_id': SharedPrefe.getDeviceId(),
+    //   }
+    // );
+    print("お気に入りapi実行");
+    final uri = createUri(
       '/api/games/favorite',
       {
         'device_id': SharedPrefe.getDeviceId(),
       }
     );
-    print("お気に入りapi実行");
     // api実行
     final response = await http.get(uri);
     // json型に変換
@@ -289,8 +321,15 @@ class ApiClient {
 
   /// ゲームお気に入り登録
   Future<bool> addFavoriteGameApi(int gameId) async {
-    final uri = Uri.https(
-      host,
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/games/add/favorite',
+    //   {
+    //     'device_id' : SharedPrefe.getDeviceId(),
+    //     'game_id'   : '$gameId',
+    //   }
+    // );
+    final uri = createUri(
       '/api/games/add/favorite',
       {
         'device_id' : SharedPrefe.getDeviceId(),
@@ -307,8 +346,15 @@ class ApiClient {
 
   /// ゲームお気に入り解除
   Future<bool> removeFavoriteGameApi(int gameId) async {
-    final uri = Uri.https(
-      host,
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/games/remove/favorite',
+    //   {
+    //     'device_id' : SharedPrefe.getDeviceId(),
+    //     'game_id'   : '$gameId',
+    //   }
+    // );
+    final uri = createUri(
       '/api/games/remove/favorite',
       {
         'device_id' : SharedPrefe.getDeviceId(),
@@ -326,8 +372,15 @@ class ApiClient {
 
   /// ゲーム詳細取得
   Future getGameDetail(int gameId) async {
-    final uri = Uri.https(
-      host,
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/games/detail',
+    //   {
+    //     'device_id' : SharedPrefe.getDeviceId(),
+    //     'game_id'   : '$gameId',
+    //   }
+    // );
+    final uri = createUri(
       '/api/games/detail',
       {
         'device_id' : SharedPrefe.getDeviceId(),
@@ -351,8 +404,17 @@ class ApiClient {
     String email,
     String message,
   ) async {
-    final uri = Uri.https(
-      host,
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/contact/message',
+    //   {
+    //     'device_id' : SharedPrefe.getDeviceId(),
+    //     'nickname'  : '$nickname',
+    //     'email'     : '$email',
+    //     'message'   : '$message',
+    //   }
+    // );
+    final uri = createUri(
       '/api/contact/message',
       {
         'device_id' : SharedPrefe.getDeviceId(),
@@ -372,8 +434,14 @@ class ApiClient {
 
   /// ゲームお知らせ取得
   Future getNoticeList() async {
-    final uri = Uri.https(
-      host,
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/notice',
+    //   {
+    //     'device_id' : SharedPrefe.getDeviceId(),
+    //   }
+    // );
+    final uri = createUri(
       '/api/notice',
       {
         'device_id' : SharedPrefe.getDeviceId(),
@@ -394,8 +462,15 @@ class ApiClient {
 
   /// 通知登録
   Future notificationRegister (int gameId) async {
-    final uri = Uri.https(
-      host,
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/notification/register',
+    //   {
+    //     'device_id' : SharedPrefe.getDeviceId(),
+    //     'game_id'   : '$gameId',
+    //   }
+    // );
+    final uri = createUri(
       '/api/notification/register',
       {
         'device_id' : SharedPrefe.getDeviceId(),
@@ -416,8 +491,16 @@ class ApiClient {
 
   /// 通知キャンセル
   Future notificationCancel (int gameId, int notificationId) async {
-    final uri = Uri.https(
-      host,
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/notification/cancel',
+    //   {
+    //     'device_id'         : SharedPrefe.getDeviceId(),
+    //     'game_id'           : '$gameId',
+    //     'notification_id'   : '$notificationId',
+    //   }
+    // );
+    final uri = createUri(
       '/api/notification/cancel',
       {
         'device_id'         : SharedPrefe.getDeviceId(),
@@ -459,8 +542,12 @@ class ApiClient {
       'post_date' : "${date}",
       'site_id'    : "${test}"
     };
-    final uri = Uri.https(
-      host,
+    // final uri = Uri.https(
+    //   host,
+    //   '/api/article/index',
+    //   params
+    // );
+    final uri = createUri(
       '/api/article/index',
       params
     );

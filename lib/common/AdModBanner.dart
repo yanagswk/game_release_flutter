@@ -23,8 +23,8 @@ class _AdModBannerState extends State<AdModBanner> {
   // バナー広告をインスタンス化
   BannerAd myBanner = BannerAd(
     // adUnitId: getTestAdBannerUnitId(),
-    // adUnitId: "ca-app-pub-3940256099942544/2934735716", // テストIOS用
-    adUnitId: "ca-app-pub-5120399662467556/3935570145", // 本番IOS用
+    adUnitId: "ca-app-pub-3940256099942544/2934735716", // テストIOS用
+    // adUnitId: "ca-app-pub-5120399662467556/3935570145", // 本番IOS用
     size: AdSize.banner,
     request: const AdRequest(),
     listener: const BannerAdListener()
