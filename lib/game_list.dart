@@ -204,6 +204,7 @@ class _GameListState extends State<GameList> with AutomaticKeepAliveClientMixin 
                 contents: groupGames,
                 getContents: getGameList,
                 gameCount: gameCount,
+                targetCount: targetCount,
           ),
           // バナー広告
           AdModBanner(adModHight: 50)
@@ -222,11 +223,14 @@ class GameListInfinityView extends StatefulWidget {
 
   int gameCount;
 
+  int targetCount;
+
   GameListInfinityView({
     Key? key,
     required this.contents,
     required this.getContents,
-    required this.gameCount
+    required this.gameCount,
+    required this.targetCount // ゲームの総数
   }) : super(key: key);
 
   @override
@@ -303,7 +307,7 @@ class _GameListInfinityViewState extends State<GameListInfinityView> {
                   widget.gameCount += 1;
                   return Column(
                     children: [
-                      widget.gameCount % 8 == 0 && widget.gameCount != 1
+                      widget.gameCount % 8 == 0 && widget.targetCount - 3 > widget.gameCount
                         // バナー広告
                         ? AdModBanner(adModHight: 50)
                         : const SizedBox(),

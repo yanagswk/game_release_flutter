@@ -62,31 +62,32 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     );
                   },
                 ),
-                // ListTile(
-                //   title: Text('このアプリをレビューする'),
-                //   onTap: () {
-                //     // TODO: アプリできてから？？
-                //     LaunchReview.launch();
-                //   },
-                // ),
-                // ListTile(
-                //   title: Text('シェアする'),
-                //   onTap: () {
-                //     // Navigator.pop(context);
-                //     Share.share('このアプリをシェアしたいんだお');
-                //   },
-                // ),
                 ListTile(
-                  leading: const Icon(Icons.policy_outlined),
+                  leading: const Icon(Icons.ios_share),
+                  title: Text('アプリを教える'),
+                  onTap: () {
+                    // SNS共有
+                    final share_msg = 'げーむりり - 最新ゲームソフトの発売日がわかる！ \n https://apps.apple.com/jp/app/%E3%81%92%E3%83%BC%E3%82%80%E3%82%8A%E3%82%8A/id6444914435';
+                    Share.share(share_msg);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.star_border),
+                  title: Text('アプリをレビューする'),
+                  onTap: () {
+                    launchUrl(
+                      Uri.parse("https://apps.apple.com/jp/app/%E3%81%92%E3%83%BC%E3%82%80%E3%82%8A%E3%82%8A/id6444914435?action=write-review"),
+                      mode: LaunchMode.externalApplication,   // デフォルトのブラウザで開く(参考: https://zenn.dev/tsuruo/articles/56f3abbb132f90)
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.privacy_tip_outlined),
                   title: Text('プライバシーポリシー'),
                   onTap: () {
                     _launchUrl();
                   },
                 ),
-                // Container(
-                //   alignment: Alignment.bottomCenter,
-                //   child: Text("バージョン: ${_gameGetx.appVersion}")
-                // )
               ],
             ),
           ),

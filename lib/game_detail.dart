@@ -917,6 +917,8 @@ class _GameDetailState extends State<GameDetail> {
                           margin: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 30.0),
                           child: Column(
                             children: [
+                              AdModBanner(adModHight: 250),
+                              const SizedBox(height: 30),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
